@@ -11,7 +11,7 @@ if (WEBGL.isWebGLAvailable()) {
 
   var rollOverMesh, rollOverMaterial
   var cubeGeo, cubeMaterial
-
+// test 
   var objects = []
 
   init()
