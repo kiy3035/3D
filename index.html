@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- jQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <!-- 자바스크립트 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    
+    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="static/styles/main.css">
+    <title>Three.JS-Webpack Boilerplate</title>
+  </head>
+
+  <body>
+    <!-- Information modal -->
+    <a id="open-modal-btn" class="float">
+      <i class="icon-float material-icons">menu</i>
+    </a>
+
+    <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
+    <div class="bgRed">
+        X축&nbsp; : <input type="text" id="xChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><br>
+        Y축&nbsp; : <input type="text" id="yChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><br>
+        가로 : <input type="text" id="width" style="text-align: right" placeholder="가로를 입력하세요."/><br>
+        세로 : <input type="text" id="height" style="text-align: right" placeholder="세로를 입력하세요."/><br>
+        높이 : <input type="text" id="vertical" style="text-align: right" placeholder="높이를 입력하세요."/><br>
+        <button type="button" class="btn btn-success" id="btnTrans"> 변환 </button>
+    </div>
+
+    <div id="info-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal-btn">&times;</span>
+        <a>참고사항</a>
+        <h3>Welcome to my Three.JS-Webpack boilerplate!</h3>
+        <p>It is a great and easy way to bootstrap Three.Js project.</p>
+        <p>To get started clone the repo <code>git clone https://github.com/aakatev/three-js-webpack.git</code>.</p>
+        <p>For more information, navigate to the <a href="https://github.com/aakatev/three-js-webpack">project GitHub page</a>!</p>
+      </div>
+    </div>
+    <!-- End information modal -->
+
+  <script src="public/bundle.js"></script>
+  </body>
+
+  <script>
+    $(document).ready(function() {
+
+      $("#btnTrans").click(function() {
+        console.log("웹투게더 화이팅!");
+      });
+
+      $("#xChuk").focus();
+      
+      // inputBox 제어
+      $('input[type="text"]').on('blur', function() {
+
+        var inputVal = $(this).val();
+
+        // 현재 위치한 input 요소의 ID를 저장
+        let currentInputId = "";
+        currentInputId = $(this).attr('id');
+
+        // 정규식 (숫자 1 ~ 9)
+        var onlyNumber = /^[1-9]*$/;
+ 
+        if(onlyNumber.test(inputVal) == false){
+
+          var message = $('<span> 양의 정수만 입력하세요. </span>');
+          message.css('color', 'red');
+
+          // input 요소의 뒤에 새로운 글자를 추가
+          const $currentInput = $('#' + currentInputId);
+          $currentInput.after(message);
+
+        }else{
+
+          var message = $('<span> </span>');
+
+          // input 요소의 뒤에 새로운 글자를 추가@@@@1!!
+          const $currentInput = $('#' + currentInputId);
+          $currentInput.after(message);
+        }
+
+      });
+
+  });
+
+
+</script>
+
+
+</html>
