@@ -1,9 +1,7 @@
 import * as THREE from 'three'
 import { WEBGL } from './webgl'
 import './modal'
-console.log("인덱스JS")
 if (WEBGL.isWebGLAvailable()) {
-
   var camera, scene, renderer
   var plane
   var mouse,
@@ -12,7 +10,6 @@ if (WEBGL.isWebGLAvailable()) {
 
   var rollOverMesh, rollOverMaterial
   var cubeGeo, cubeMaterial
-// test 
   var objects = []
 
   init()
@@ -45,7 +42,7 @@ if (WEBGL.isWebGLAvailable()) {
       color: 0xfeb74c,
       map: new THREE.TextureLoader().load('static/textures/square.png'),
     })
-
+//test
     var gridHelper = new THREE.GridHelper(1000, 20)
     scene.add(gridHelper)
 
@@ -90,7 +87,6 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseMove(event) {
-    console.log("@2")
     event.preventDefault()
     
    
@@ -119,28 +115,31 @@ if (WEBGL.isWebGLAvailable()) {
   function onDocumentMouseDown(event) {
     event.preventDefault()
 
+    // 좌표,너비,넓이 
     mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     )
 
-    raycaster.setFromCamera(mouse, camera)
-
+    raycaster.setFromCamera(mouse, camera) // 클릭지점에서 3D 객체를 찾아내는듯
+    
+    // 클릭이 되어 객체가 있다면
     var intersects = raycaster.intersectObjects(objects)
-
+    
     if (intersects.length > 0) {
       var intersect = intersects[0]
-
+      
+      // 변수인데 무슨변수인지 모르겠음 shift키 누른지 안누른지?
       if (isShiftDown) {
         if (intersect.object !== plane) {
           scene.remove(intersect.object)
-
+          
           objects.splice(objects.indexOf(intersect.object), 1)
         }
-
+        
       } else {
+        console.log("ho")
         var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
-        console.log(voxel)
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
         scene.add(voxel)
@@ -148,6 +147,7 @@ if (WEBGL.isWebGLAvailable()) {
         objects.push(voxel)
       }
 
+      // 화면 랜더링
       render()
     }
   }
