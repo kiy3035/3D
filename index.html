@@ -16,6 +16,13 @@
     <link rel="icon" href="static/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="static/styles/main.css">
     <title>Three.JS-Webpack Boilerplate</title>
+
+    <style>
+      .error-text {
+          color: red;
+      }
+  </style>
+
   </head>
 
   <body>
@@ -26,12 +33,13 @@
 
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
     <div class="bgRed">
-        X축&nbsp; : <input type="text" id="xChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><br>
-        Y축&nbsp; : <input type="text" id="yChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><br>
-        가로 : <input type="text" id="width" style="text-align: right" placeholder="가로를 입력하세요."/><br>
-        세로 : <input type="text" id="height" style="text-align: right" placeholder="세로를 입력하세요."/><br>
-        높이 : <input type="text" id="vertical" style="text-align: right" placeholder="높이를 입력하세요."/><br>
-        <button type="button" class="btn btn-success" id="btnTrans"> 변환 </button>
+        가로 : <input type="text" id="width" name="inputName" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
+        세로 : <input type="text" id="height" name="inputName" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
+        높이 : <input type="text" id="vertical" name="inputName" style="text-align: right" placeholder="높이를 입력하세요."/><span class="error-text"></span><br>
+        X축&nbsp; : <input type="text" id="xChuk" name="inputName" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Y축&nbsp; : <input type="text" id="yChuk" name="inputName" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Z축&nbsp; : <input type="text" id="zChuk" name="inputName" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
+        <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
     </div>
 
     <div id="info-modal" class="modal">
@@ -55,57 +63,39 @@
     $(document).ready(function() {
 
       $("#btnTrans").click(function() {
-        console.log("웹투게더 화이팅22!");
-        test();
+        
+        var xChuk = $("#xChuk").val();
+        var yChuk = $("#yChuk").val();
+        var zChuk = $("#zChuk").val();
+        var width = $("#width").val();
+        var height = $("#height").val();
+        var vertical = $("#vertical").val();
+        var valList = [xChuk, yChuk, zChuk, width, height, vertical];
+
+        setTransData(valList);
       });
 
-      $("#xChuk").focus();
+      $("#width").focus();
       
-      // inputBox 제어
+      // 유효성 검사
       $('input[type="text"]').on('blur', function() {
 
-        var inputVal = $(this).val();
-
-        // 현재 위치한 input 요소의 ID를 저장
-        let currentInputId = "";
-        currentInputId = $(this).attr('id');
+        const inputVal = $(this).val();
+        const errorText = $(this).next('.error-text');
 
         // 정규식 (숫자 1 ~ 9)
         var onlyNumber = /^[1-9]*$/;
- 
-        if(onlyNumber.test(inputVal) == false){
-
-          var message = $('<span name="spanNM"> 양의 정수만 입력하세요. </span>');
-          message.css('color', 'red');
-          var spanLength = $('span[name="spanNM"]').length;
-          console.log(spanLength);
-          if(typeof message != 'undefined'){
-            if(spanLength < 1){
-              // input 요소의 뒤에 새로운 글자를 추가
-              const $currentInput = $('#' + currentInputId);
-              $currentInput.after(message);
-            }
-          }
+        
+        if(!onlyNumber.test(inputVal)){
+          errorText.text(' 양의 정수를 입력하세요.');
         }else{
-          console.log("숫자다")
-          var message2 = $('<span name="spanNM"> </span>');
-
-          // input 요소의 뒤에 새로운 글자를 추가
-          const $currentInput = $('#' + currentInputId);
-          $currentInput.after(message2);
-          message2 = null;
+          errorText.text('');
         }
-
       });
 
-    // const btnTrans = document.getElementById("btnTrans");
-    // btnTrans.addEventListener("click", function() {
-    //   test();
-    // });
   });
 
 
 </script>
-
 
 </html>
