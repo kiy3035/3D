@@ -14,7 +14,6 @@ var WEBGL = {
   isWebGL2Available: function () {
     try {
       var canvas = document.createElement('canvas')
-      console.log("찍는다")
       return !!(window.WebGL2RenderingContext && canvas.getContext('webgl2'))
     } catch (e) {
       return false

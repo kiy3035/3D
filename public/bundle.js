@@ -1,4 +1,3 @@
-console.log("인덱스JS")
 ! function(t) {
     var e = {};
 

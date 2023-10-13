@@ -88,7 +88,7 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseMove(event) {
-    event.preventDefault()
+    // event.preventDefault()
     
    
     mouse.set(
@@ -99,7 +99,7 @@ if (WEBGL.isWebGLAvailable()) {
     raycaster.setFromCamera(mouse, camera)
 
     var intersects = raycaster.intersectObjects(objects)
-
+    
     if (intersects.length > 0) {
       var intersect = intersects[0]
       rollOverMesh.position.copy(intersect.point).add(intersect.face.normal)
@@ -114,7 +114,7 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseDown(event) {
-    event.preventDefault()
+    // event.preventDefault()
 
     // 좌표,너비,넓이 
     mouse.set(
@@ -126,7 +126,7 @@ if (WEBGL.isWebGLAvailable()) {
     
     // 클릭이 되어 객체가 있다면
     var intersects = raycaster.intersectObjects(objects)
-    
+
     if (intersects.length > 0) {
       var intersect = intersects[0]
       
@@ -175,6 +175,26 @@ if (WEBGL.isWebGLAvailable()) {
   var warning = WEBGL.getWebGLErrorMessage()
   document.body.appendChild(warning)
 }
-window.test = function() {
-  alert("ho");
+
+// 변환 버튼 함수
+window.setTransData = function(value) {
+
+  var intersects = raycaster.intersectObjects(objects)
+  var intersect;
+    
+  if (intersects.length > 0) {
+    intersect = intersects[0]
+  }
+
+  var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
+
+  scene.add(voxel)
+  objects.push(voxel)
+    
+  // 3D객체 위치 설정
+  voxel.position.set(value[3], value[4], value[5]) // X축, Y축, Z축
+  // 3D객체 크기 설정
+  voxel.scale.set(value[0], value[1], value[2]) // 가로, 세로, 높이
+
+  console.log(voxel)
 };
