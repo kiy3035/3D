@@ -46,7 +46,9 @@
     </div>
     <!-- End information modal -->
 
-  <script src="public/bundle.js"></script>
+    <script src="public/bundle.js"></script>
+  <script type="module" src="src/index.js"></script>
+
   </body>
 
   <script>
@@ -72,20 +74,25 @@
  
         if(onlyNumber.test(inputVal) == false){
 
-          var message = $('<span> 양의 정수만 입력하세요. </span>');
+          var message = $('<span name="spanNM"> 양의 정수만 입력하세요. </span>');
           message.css('color', 'red');
+          var spanLength = $('span[name="spanNM"]').length;
+          console.log(spanLength);
+          if(typeof message != 'undefined'){
+            if(spanLength < 1){
+              // input 요소의 뒤에 새로운 글자를 추가
+              const $currentInput = $('#' + currentInputId);
+              $currentInput.after(message);
+            }
+          }
+        }else{
+          console.log("숫자다")
+          var message2 = $('<span name="spanNM"> </span>');
 
           // input 요소의 뒤에 새로운 글자를 추가
           const $currentInput = $('#' + currentInputId);
-          $currentInput.after(message);
-
-        }else{
-
-          var message = $('<span> </span>');
-
-          // input 요소의 뒤에 새로운 글자를 추가m
-          const $currentInput = $('#' + currentInputId);
-          $currentInput.after(message);
+          $currentInput.after(message2);
+          message2 = null;
         }
 
       });
