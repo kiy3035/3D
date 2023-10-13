@@ -1,13 +1,13 @@
 import * as THREE from 'three'
 import { WEBGL } from './webgl'
+import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import './modal'
 
 if (WEBGL.isWebGLAvailable()) {
-  var camera, scene, renderer
+  var camera, scene, renderer, controls
   var plane
-  var mouse,
-    raycaster,
-    isShiftDown = false
+  var mouse, raycaster, isShiftDown = false
 
   var rollOverMesh, rollOverMaterial
   var cubeGeo, cubeMaterial
@@ -43,7 +43,7 @@ if (WEBGL.isWebGLAvailable()) {
       color: 0xfeb74c,
       map: new THREE.TextureLoader().load('static/textures/square.png'),
     })
-//test
+
     var gridHelper = new THREE.GridHelper(1000, 20)
     scene.add(gridHelper)
 
@@ -73,6 +73,17 @@ if (WEBGL.isWebGLAvailable()) {
     renderer.setSize(window.innerWidth, window.innerHeight)
     document.body.appendChild(renderer.domElement)
 
+    // OrbitControls 추가
+    controls = new OrbitControls(camera, renderer.domElement)
+    controls.addEventListener('change', render)
+
+    // DragControls 추가
+    var dragControls = new DragControls(objects, camera, renderer.domElement)
+    dragControls.addEventListener('drag', function (event) {
+      // 객체를 드래그 중일 때 실행되는 코드
+      // 여기서 객체의 위치를 업데이트하거나 추가 작업을 수행할 수 있습니다.
+    })
+
     document.addEventListener('mousemove', onDocumentMouseMove, false)
     document.addEventListener('mousedown', onDocumentMouseDown, false)
     document.addEventListener('keydown', onDocumentKeyDown, false)
@@ -82,24 +93,19 @@ if (WEBGL.isWebGLAvailable()) {
 
   function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
-    camera.updateProjectionMatrix() // 반응형 웹 설정
-
+    camera.updateProjectionMatrix()
     renderer.setSize(window.innerWidth, window.innerHeight)
   }
 
   function onDocumentMouseMove(event) {
-    // event.preventDefault()
-    
-   
     mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     )
-
     raycaster.setFromCamera(mouse, camera)
 
     var intersects = raycaster.intersectObjects(objects)
-    
+
     if (intersects.length > 0) {
       var intersect = intersects[0]
       rollOverMesh.position.copy(intersect.point).add(intersect.face.normal)
@@ -114,40 +120,34 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseDown(event) {
-    // event.preventDefault()
-
-    // 좌표,너비,넓이 
     mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
     )
+    raycaster.setFromCamera(mouse, camera)
 
-    raycaster.setFromCamera(mouse, camera) // 클릭지점에서 3D 객체를 찾아내는듯
-    
-    // 클릭이 되어 객체가 있다면
     var intersects = raycaster.intersectObjects(objects)
 
     if (intersects.length > 0) {
       var intersect = intersects[0]
-      
-      // 변수인데 무슨변수인지 모르겠음 shift키 누른지 안누른지?
+
       if (isShiftDown) {
         if (intersect.object !== plane) {
           scene.remove(intersect.object)
-          
           objects.splice(objects.indexOf(intersect.object), 1)
         }
-        
       } else {
         var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
         voxel.position.copy(intersect.point).add(intersect.face.normal)
-        voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
+        voxel.position
+          .divideScalar(50)
+          .floor()
+          .multiplyScalar(50)
+          .addScalar(25)
         scene.add(voxel)
-
         objects.push(voxel)
       }
 
-      // 화면 랜더링
       render()
     }
   }
@@ -178,10 +178,9 @@ if (WEBGL.isWebGLAvailable()) {
 
 // 변환 버튼 함수
 window.setTransData = function(value) {
-
   var intersects = raycaster.intersectObjects(objects)
-  var intersect;
-    
+  var intersect
+
   if (intersects.length > 0) {
     intersect = intersects[0]
   }
@@ -190,11 +189,9 @@ window.setTransData = function(value) {
 
   scene.add(voxel)
   objects.push(voxel)
-    
-  // 3D객체 위치 설정
-  voxel.position.set(value[3], value[4], value[5]) // X축, Y축, Z축
-  // 3D객체 크기 설정
-  voxel.scale.set(value[0], value[1], value[2]) // 가로, 세로, 높이
+
+  voxel.position.set(value[3], value[4], value[5])
+  voxel.scale.set(value[0], value[1], value[2])
 
   console.log(voxel)
-};
+}
