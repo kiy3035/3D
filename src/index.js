@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { WEBGL } from './webgl'
 import './modal'
+
 if (WEBGL.isWebGLAvailable()) {
   var camera, scene, renderer
   var plane
@@ -138,7 +139,6 @@ if (WEBGL.isWebGLAvailable()) {
         }
         
       } else {
-        console.log("ho")
         var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
@@ -175,3 +175,6 @@ if (WEBGL.isWebGLAvailable()) {
   var warning = WEBGL.getWebGLErrorMessage()
   document.body.appendChild(warning)
 }
+window.test = function() {
+  alert("ho");
+};
