@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import { WEBGL } from './webgl'
 import './modal'
-
+console.log("인덱스JS")
 if (WEBGL.isWebGLAvailable()) {
+
   var camera, scene, renderer
   var plane
   var mouse,
@@ -89,6 +90,7 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseMove(event) {
+    console.log("@2")
     event.preventDefault()
     
    
@@ -138,6 +140,7 @@ if (WEBGL.isWebGLAvailable()) {
 
       } else {
         var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
+        console.log(voxel)
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position.divideScalar(50).floor().multiplyScalar(50).addScalar(25)
         scene.add(voxel)
