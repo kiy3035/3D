@@ -125,12 +125,12 @@ if (WEBGL.isWebGLAvailable()) {
       -(event.clientY / window.innerHeight) * 2 + 1
     )
     raycaster.setFromCamera(mouse, camera)
-
+    
     var intersects = raycaster.intersectObjects(objects)
-
+    
     if (intersects.length > 0) {
       var intersect = intersects[0]
-
+      
       if (isShiftDown) {
         if (intersect.object !== plane) {
           scene.remove(intersect.object)
@@ -140,12 +140,16 @@ if (WEBGL.isWebGLAvailable()) {
         var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
         voxel.position.copy(intersect.point).add(intersect.face.normal)
         voxel.position
-          .divideScalar(50)
-          .floor()
-          .multiplyScalar(50)
-          .addScalar(25)
+        .divideScalar(50)
+        .floor()
+        .multiplyScalar(50)
+        .addScalar(25)
+        if (voxel.position.y < 0) {
+          return; // Y 좌표가 음수일 경우 더 이상 처리하지 않고 종료
+        }
         scene.add(voxel)
         objects.push(voxel)
+        console.log(voxel)
       }
 
       render()
