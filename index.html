@@ -21,7 +21,7 @@
       .error-text {
           color: red;
       }
-  </style>
+    </style>
 
   </head>
 
@@ -40,6 +40,8 @@
         Y축&nbsp; : <input type="text" id="yChuk" name="inputName" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
         Z축&nbsp; : <input type="text" id="zChuk" name="inputName" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
+        <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
+        <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
     </div>
 
     <div id="info-modal" class="modal">
@@ -62,40 +64,60 @@
   <script>
     $(document).ready(function() {
 
-      $("#btnTrans").click(function() {
-        
-        var xChuk = $("#xChuk").val();
-        var yChuk = $("#yChuk").val();
-        var zChuk = $("#zChuk").val();
-        var width = $("#width").val();
-        var height = $("#height").val();
-        var vertical = $("#vertical").val();
-        var valList = [xChuk, yChuk, zChuk, width, height, vertical];
-
-        setTransData(valList);
-      });
-
       $("#width").focus();
       
-      // 유효성 검사
-      $('input[type="text"]').on('blur', function() {
-
-        const inputVal = $(this).val();
-        const errorText = $(this).next('.error-text');
-
-        // 정규식 (숫자 1 ~ 9)
-        var onlyNumber = /^[1-9]*$/;
-        
-        if(!onlyNumber.test(inputVal)){
-          errorText.text(' 양의 정수를 입력하세요.');
-        }else{
-          errorText.text('');
-        }
-      });
-
   });
 
+  // 유효성 검사
+  $('input[type="text"]').on('blur', inputValid);
 
+  // 적용 버튼
+  $("#btnTrans").click(fnClickTrans);
+
+  // 이전 버튼
+  $("#btnPrev").click(fnClickPrev);
+
+  // 초기화 버튼
+  $("#btnReset").click(fnClickReset);
+
+  function inputValid() {
+    const inputVal = $(this).val();
+    const errorText = $(this).next('.error-text');
+
+    // 정규식 (숫자 1 ~ 9)
+    var onlyNumber = /^[0-9]*$/;
+    
+    if(!onlyNumber.test(inputVal)){
+      errorText.text(' 양의 정수를 입력하세요.');
+    }else{
+      errorText.text('');
+    }
+  }
+
+
+  function fnClickTrans() {
+
+    var width = $("#width").val();
+    var height = $("#height").val();
+    var vertical = $("#vertical").val();
+    var xChuk = $("#xChuk").val();
+    var yChuk = $("#yChuk").val();
+    var zChuk = $("#zChuk").val();
+
+    var valList = [ width, height, vertical, xChuk, yChuk, zChuk ];
+
+    setTransData(valList);
+
+  }
+  
+  function fnClickPrev(){
+    setPrevData();
+  }
+
+  function fnClickReset(){
+    setResetData();
+  }
+  
 </script>
 
 </html>

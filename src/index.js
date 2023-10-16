@@ -16,6 +16,10 @@ if (WEBGL.isWebGLAvailable()) {
   init()
   render()
 
+  // setTransData, setPrevData 에서 쓰이는 전역변수
+  var cube; 
+  var cubeUUIDList = [];
+  
   function init() {
     camera = new THREE.PerspectiveCamera(
       45,
@@ -127,7 +131,7 @@ if (WEBGL.isWebGLAvailable()) {
     raycaster.setFromCamera(mouse, camera)
     
     var intersects = raycaster.intersectObjects(objects)
-    
+
     if (intersects.length > 0) {
       var intersect = intersects[0]
       
@@ -180,22 +184,58 @@ if (WEBGL.isWebGLAvailable()) {
   document.body.appendChild(warning)
 }
 
-// 변환 버튼 함수
+// 적용 버튼 함수
 window.setTransData = function(value) {
-  var intersects = raycaster.intersectObjects(objects)
-  var intersect
+
+  var intersects = raycaster.intersectObjects(objects);
+  var intersect;
 
   if (intersects.length > 0) {
     intersect = intersects[0]
   }
 
-  var voxel = new THREE.Mesh(cubeGeo, cubeMaterial)
+  cube = new THREE.Mesh(cubeGeo, cubeMaterial);
 
-  scene.add(voxel)
-  objects.push(voxel)
+  cube.scale.set(value[0], value[1], value[2]);
+  cube.position.set(value[3], value[4], value[5]);
+  scene.add(cube);
 
-  voxel.position.set(value[3], value[4], value[5])
-  voxel.scale.set(value[0], value[1], value[2])
+  cubeUUIDList.push(cube.uuid);
 
-  console.log(voxel)
+  console.log("적용버튼cubeUUIDList : " + cubeUUIDList);
+  
+}
+
+// 이전 버튼 함수
+window.setPrevData = function() {
+
+  if (cubeUUIDList.length > 0) {
+    var lastCubeUUID = cubeUUIDList.pop();
+    var cubeToRemove = scene.getObjectByProperty("uuid", lastCubeUUID);
+    
+    if (cubeToRemove) {
+      scene.remove(cubeToRemove);
+      cubeToRemove.geometry.dispose();
+      cubeToRemove.material.dispose();
+    }
+  }
+
+}
+
+// 초기화 버튼 함수
+window.setResetData = function() {
+
+  for (var i = 0; i < cubeUUIDList.length; i++) {
+    var cubeUUID = cubeUUIDList[i];
+    var cubeToRemove = scene.getObjectByProperty("uuid", cubeUUID);
+
+    if (cubeToRemove) {
+      scene.remove(cubeToRemove);
+      cubeToRemove.geometry.dispose();
+      cubeToRemove.material.dispose();
+    }
+  }
+  
+  cubeUUIDList = []; // 배열 초기화
+  
 }
