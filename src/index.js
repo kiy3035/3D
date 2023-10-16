@@ -93,6 +93,7 @@ if (WEBGL.isWebGLAvailable()) {
     document.addEventListener('keydown', onDocumentKeyDown, false)
     document.addEventListener('keyup', onDocumentKeyUp, false)
     window.addEventListener('resize', onWindowResize, false)
+
   }
 
   function onWindowResize() {
@@ -187,6 +188,8 @@ if (WEBGL.isWebGLAvailable()) {
 // 적용 버튼 함수
 window.setTransData = function(value) {
 
+  var value2 = value.map(str => parseInt(str)); // String -> int 변환
+
   var intersects = raycaster.intersectObjects(objects);
   var intersect;
 
@@ -196,14 +199,12 @@ window.setTransData = function(value) {
 
   cube = new THREE.Mesh(cubeGeo, cubeMaterial);
 
-  cube.scale.set(value[0], value[1], value[2]);
-  cube.position.set(value[3], value[4], value[5]);
+  cube.scale.set(value2[0], value2[2], value2[1]);
+  cube.position.set(value2[3], value2[5], value2[4]);
   scene.add(cube);
 
   cubeUUIDList.push(cube.uuid);
-
-  console.log("적용버튼cubeUUIDList : " + cubeUUIDList);
-  
+  console.log(cube)
 }
 
 // 이전 버튼 함수
