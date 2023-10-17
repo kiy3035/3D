@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-    "start-frontend": "webpack-dev-server --mode development --port 9000",
-    "start-backend": "node server.js --mode development --port 9001",
+    "start": "webpack-dev-server --mode development",
     "format": "prettier --write '**/*.js'"
   },
   "keywords": [],
