@@ -32,6 +32,10 @@
     </a>
 
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
+      <div style="text-align: right;">
+        <button id="btnNon">논</button>
+        <button id="btnVessel">선박</button>
+      </div>
     <div class="bgRed">
         가로 : <input type="text" id="width" name="inputName" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
         세로 : <input type="text" id="height" name="inputName" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
@@ -80,6 +84,12 @@
   // 초기화 버튼
   $("#btnReset").click(fnClickReset);
 
+  // 논 버튼
+  $("#btnNon").click(fnChangeNon);
+
+  // 선박 버튼
+  $("#btnVessel").click(fnChangeVessel);
+
   function inputValid() {
     const inputVal = $(this).val();
     const errorText = $(this).next('.error-text');
@@ -116,6 +126,14 @@
 
   function fnClickReset(){
     setResetData();
+  }
+
+  function fnChangeNon(){
+    
+  }
+
+  function fnChangeVessel(){
+
   }
   
 </script>

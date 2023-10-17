@@ -30,8 +30,9 @@ if (WEBGL.isWebGLAvailable()) {
     camera.position.set(500, 800, 1300)
     camera.lookAt(0, 0, 0)
 
+
     scene = new THREE.Scene()
-    scene.background = new THREE.Color(0xf0f0f0)
+    // scene.background = new THREE.Color(0xf0f0f0)
 
     var rollOverGeo = new THREE.BoxBufferGeometry(50, 50, 50)
     rollOverMaterial = new THREE.MeshBasicMaterial({
@@ -44,8 +45,8 @@ if (WEBGL.isWebGLAvailable()) {
 
     cubeGeo = new THREE.BoxBufferGeometry(50, 50, 50)
     cubeMaterial = new THREE.MeshLambertMaterial({
-      color: 0xfeb74c,
-      map: new THREE.TextureLoader().load('static/textures/square.png'),
+      // color: 0xfeb74c,
+      map: new THREE.TextureLoader().load('static/textures/container.jpg'),
     })
 
     var gridHelper = new THREE.GridHelper(1000, 20)
@@ -94,6 +95,19 @@ if (WEBGL.isWebGLAvailable()) {
     document.addEventListener('keyup', onDocumentKeyUp, false)
     window.addEventListener('resize', onWindowResize, false)
 
+    
+    // 이미지 로드
+    const textureLoader = new THREE.TextureLoader();
+    const backImg = textureLoader.load('static/backgroundimages/non.jpg');
+
+    scene.background = backImg;
+
+    const animate = () => {
+      requestAnimationFrame(animate);
+      renderer.render(scene, camera);
+    };
+
+    animate();
   }
 
   function onWindowResize() {
@@ -200,7 +214,7 @@ window.setTransData = function(value) {
   cube = new THREE.Mesh(cubeGeo, cubeMaterial);
 
   cube.scale.set(value2[0], value2[2], value2[1]);
-  cube.position.set(value2[3], value2[5], value2[4]);
+  cube.position.set(value2[3], value2[4], value2[5]);
   scene.add(cube);
 
   cubeUUIDList.push(cube.uuid);
