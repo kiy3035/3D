@@ -2,7 +2,6 @@ import * as THREE from 'three'
 import { WEBGL } from './webgl'
 import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import './modal'
 
 if (WEBGL.isWebGLAvailable()) {
   var camera, scene, renderer, controls
@@ -20,10 +19,8 @@ if (WEBGL.isWebGLAvailable()) {
   var cube; 
   var cubeUUIDList = [];
 
-  
-  
+
   window.init = function(val) {
-console.log("init 내부 val :" + val)
     camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -78,7 +75,7 @@ console.log("init 내부 val :" + val)
     renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(window.innerWidth, window.innerHeight)
-    document.body.appendChild(renderer.domElement)
+    // document.body.appendChild(renderer.domElement)
 
     // OrbitControls 추가
     controls = new OrbitControls(camera, renderer.domElement)
@@ -99,13 +96,6 @@ console.log("init 내부 val :" + val)
 
     convertScene(val);
 
-
-    // const animate = () => {
-    //   requestAnimationFrame(animate);
-    //   renderer.render(scene, camera);
-    // };
-
-    // animate();
   }
 
   function onWindowResize() {
@@ -256,38 +246,87 @@ var scenes = []; // scenes 배열을 정의
 
 // 화면 전환
 function convertScene(val) {
-
-   // 기존 scene에서 모든 객체 제거
-    while (scene.children.length > 0) {
-      var obj = scene.children[0];
-      scene.remove(obj);
-      if (obj.geometry) obj.geometry.dispose();
-      if (obj.material) obj.material.dispose();
+  
+  const canvas = document.querySelector('canvas');
+  
+   // canvas 요소가 존재하면 제거
+   if (canvas) {
+    canvas.remove();
     }
-
- 
+      
    var textureLoader = new THREE.TextureLoader();
 
    if (textureLoader.clear) {
      textureLoader.clear();
-   }
-   
-  console.log("convertScene 함수:" + val)
+    }
 
-  // 이미지 로드
-  var backImg;
+    var backImg;
 
-  if (val == "non") {
+    if (val == "non") {
     backImg = textureLoader.load('static/backgroundimages/non.jpg')
     console.log("non2:" + backImg)
 
-  } else if (val == "vessel") {
+    } else if (val == "vessel") {
     backImg = textureLoader.load('static/backgroundimages/vessel.png')
     console.log("vessel2:" + backImg)
-  }
+   }
 
   scene.background = backImg;
   renderer.render(scene, camera);
-
+  document.body.appendChild(renderer.domElement) // canvas 추가하는 코드
   
+}
+
+
+window.defaultPage = function(){
+
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xffffff)
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
+
+  // 회색 상자를 생성하고 배열에 추가
+const boxes = [];
+for (let i = 0; i < 3; i++) {
+  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const material = new THREE.MeshPhongMaterial({ color: 0x808080 });
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.x = i * 2; // 각 상자를 가로로 2단위 간격으로 배치
+  scene.add(cube);
+  boxes.push(cube);
+}
+
+  const light = new THREE.PointLight(0xffffff);
+  light.position.set(10, 10, 10);
+  scene.add(light);
+
+  function onWindowResize() {
+    const newAspect = window.innerWidth / window.innerHeight;
+    camera.aspect = newAspect;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  window.addEventListener('resize', onWindowResize);
+
+  camera.position.set(0, 0, 5); // 카메라 위치를 중앙으로 이동
+  camera.lookAt(0, 0, 0); // 카메라가 원점을 향하도록 설정
+
+  // 애니메이션 루프
+  const animate = () => {
+    requestAnimationFrame(animate);
+
+     // 각 상자를 회전
+    boxes.forEach((box) => {
+      box.rotation.x += 0.01;
+      box.rotation.y += 0.01;
+    });
+
+    renderer.render(scene, camera);
+  };
+
+  animate();
 }
