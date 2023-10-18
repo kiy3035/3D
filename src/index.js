@@ -13,14 +13,17 @@ if (WEBGL.isWebGLAvailable()) {
   var cubeGeo, cubeMaterial
   var objects = []
 
-  init()
-  render()
+  // init()
+  // render()
 
   // setTransData, setPrevData 에서 쓰이는 전역변수
   var cube; 
   var cubeUUIDList = [];
+
   
-  function init() {
+  
+  window.init = function(val) {
+console.log("init 내부 val :" + val)
     camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -29,7 +32,6 @@ if (WEBGL.isWebGLAvailable()) {
     )
     camera.position.set(500, 800, 1300)
     camera.lookAt(0, 0, 0)
-
 
     scene = new THREE.Scene()
     // scene.background = new THREE.Color(0xf0f0f0)
@@ -95,19 +97,15 @@ if (WEBGL.isWebGLAvailable()) {
     document.addEventListener('keyup', onDocumentKeyUp, false)
     window.addEventListener('resize', onWindowResize, false)
 
-    
-    // 이미지 로드
-    const textureLoader = new THREE.TextureLoader();
-    const backImg = textureLoader.load('static/backgroundimages/non.jpg');
+    convertScene(val);
 
-    scene.background = backImg;
 
-    const animate = () => {
-      requestAnimationFrame(animate);
-      renderer.render(scene, camera);
-    };
+    // const animate = () => {
+    //   requestAnimationFrame(animate);
+    //   renderer.render(scene, camera);
+    // };
 
-    animate();
+    // animate();
   }
 
   function onWindowResize() {
@@ -252,5 +250,44 @@ window.setResetData = function() {
   }
   
   cubeUUIDList = []; // 배열 초기화
+  
+}
+var scenes = []; // scenes 배열을 정의
+
+// 화면 전환
+function convertScene(val) {
+
+   // 기존 scene에서 모든 객체 제거
+    while (scene.children.length > 0) {
+      var obj = scene.children[0];
+      scene.remove(obj);
+      if (obj.geometry) obj.geometry.dispose();
+      if (obj.material) obj.material.dispose();
+    }
+
+ 
+   var textureLoader = new THREE.TextureLoader();
+
+   if (textureLoader.clear) {
+     textureLoader.clear();
+   }
+   
+  console.log("convertScene 함수:" + val)
+
+  // 이미지 로드
+  var backImg;
+
+  if (val == "non") {
+    backImg = textureLoader.load('static/backgroundimages/non.jpg')
+    console.log("non2:" + backImg)
+
+  } else if (val == "vessel") {
+    backImg = textureLoader.load('static/backgroundimages/vessel.png')
+    console.log("vessel2:" + backImg)
+  }
+
+  scene.background = backImg;
+  renderer.render(scene, camera);
+
   
 }

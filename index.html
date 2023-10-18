@@ -36,16 +36,17 @@
         <button id="btnNon">논</button>
         <button id="btnVessel">선박</button>
       </div>
-    <div class="bgRed">
-        가로 : <input type="text" id="width" name="inputName" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
-        세로 : <input type="text" id="height" name="inputName" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
-        높이 : <input type="text" id="vertical" name="inputName" style="text-align: right" placeholder="높이를 입력하세요."/><span class="error-text"></span><br>
-        X축&nbsp; : <input type="text" id="xChuk" name="inputName" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Y축&nbsp; : <input type="text" id="yChuk" name="inputName" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Z축&nbsp; : <input type="text" id="zChuk" name="inputName" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
+    <div>
+        가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
+        세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
+        높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요."/><span class="error-text"></span><br>
+        X축&nbsp; : <input type="text" id="xChuk" name="xChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Y축&nbsp; : <input type="text" id="yChuk" name="yChuk" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Z축&nbsp; : <input type="text" id="zChuk" name="zChuk" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
+        <button type="button" id="btnSave"> 저장 </button><div id="result"></div>
     </div>
 
     <div id="info-modal" class="modal">
@@ -69,8 +70,42 @@
     $(document).ready(function() {
 
       $("#width").focus();
-      
+
+      const getDataButton = $('#btnSave');
+      const resultElement = $('#result');
+
+      getDataButton.click(function() {
+        // 겟요청 코드
+        //  $.get('http://localhost:7000/api/data', function(data) {
+        //   $('#result').text('백엔드로부터 받은 데이터: ' + data);
+        // });
+
+        const dataToSend = {
+          width: $("#width").val(),
+          height: $("#height").val(),
+          vertical: $("#vertical").val(),
+          xChuk: $("#xChuk").val(),
+          yChuk: $("#yChuk").val(),
+          zChuk: $("#zChuk").val()
+        };
+        console.log(dataToSend)
+
+
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
+          data: JSON.stringify(dataToSend),
+          // dataType: 'json',
+          contentType: 'application/json;',
+          success: function(data) {
+            console.log("성공!!:" + data)
+            resultElement.text(data);
+          }
+        });
+    });
+
   });
+        
 
   // 유효성 검사
   $('input[type="text"]').on('blur', inputValid);
@@ -129,13 +164,15 @@
   }
 
   function fnChangeNon(){
-    
+    init("non")
   }
 
   function fnChangeVessel(){
-
+    init("vessel")
   }
-  
+
+ 
+
 </script>
 
 </html>
