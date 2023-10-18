@@ -15,52 +15,67 @@
     
     <link rel="icon" href="static/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="static/styles/main.css">
-    <title>Three.JS-Webpack Boilerplate</title>
+    <title>3D 창고 시뮬레이션</title>
 
     <style>
       .error-text {
           color: red;
       }
+      
     </style>
 
   </head>
 
   <body>
-    <!-- Information modal -->
-    <a id="open-modal-btn" class="float">
-      <i class="icon-float material-icons">menu</i>
-    </a>
+
+  <!-- 모달 -->
+  <div class="modal" id="myModal">
+      <div class="modal-dialog">
+          <div class="modal-content">
+
+            <!-- 모달 헤더 -->
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title" style="text-align: center;">특이사항</h4>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="modal-body">
+                <input type="text" id="modalTitle" name="modalTitle" placeholder="제목을 입력하세요."/><br><br>
+                <textarea rows="4" cols="50" id="modalContent" name="modalContent" placeholder="내용을 입력하세요."></textarea>
+            </div>
+
+            <!-- 모달 푸터 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="modalSave">저장</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+
+          </div>
+      </div>
+  </div>
+
 
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
       <div style="text-align: right;">
         <button id="btnNon">논</button>
         <button id="btnVessel">선박</button>
       </div>
-    <div>
+    
+      <div>
         가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
         세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
         높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요."/><span class="error-text"></span><br>
-        X축&nbsp; : <input type="text" id="xChuk" name="xChuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Y축&nbsp; : <input type="text" id="yChuk" name="yChuk" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Z축&nbsp; : <input type="text" id="zChuk" name="zChuk" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
+        X축&nbsp; : <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Y축&nbsp; : <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
+        Z축&nbsp; : <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
-        <button type="button" id="btnSave"> 저장 </button><div id="result"></div>
-    </div>
-
-    <div id="info-modal" class="modal">
-      <div class="modal-content">
-        <span class="close-modal-btn">&times;</span>
-        <a>참고사항</a>
-        <h3>Welcome to my Three.JS-Webpack boilerplate!</h3>
-        <p>It is a great and easy way to bootstrap Three.Js project.</p>
-        <p>To get started clone the repo <code>git clone https://github.com/aakatev/three-js-webpack.git</code>.</p>
-        <p>For more information, navigate to the <a href="https://github.com/aakatev/three-js-webpack">project GitHub page</a>!</p>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">정보 입력</button>
+        <button type="button" id="btnSave"> 저장 </button>
       </div>
-    </div>
-    <!-- End information modal -->
-
+    
     <script src="public/bundle.js"></script>
     <script src="src/index.js"></script>
 
@@ -70,9 +85,9 @@
     $(document).ready(function() {
 
       $("#width").focus();
+      defaultPage();
 
       const getDataButton = $('#btnSave');
-      const resultElement = $('#result');
 
       getDataButton.click(function() {
         // 겟요청 코드
@@ -84,21 +99,18 @@
           width: $("#width").val(),
           height: $("#height").val(),
           vertical: $("#vertical").val(),
-          x_chuk: $("#xChuk").val(),
-          y_chuk: $("#yChuk").val(),
-          z_chuk: $("#zChuk").val()
+          x_chuk: $("#x_chuk").val(),
+          y_chuk: $("#y_chuk").val(),
+          z_chuk: $("#z_chuk").val()
         };
-        console.log(dataToSend)
 
         $.ajax({
           type: "POST",
           url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
           data: JSON.stringify(dataToSend),
-          // dataType: 'json',
-          contentType: 'application/json;',
+          contentType: 'application/json',
           success: function(data) {
             console.log("성공!!:" + data)
-            resultElement.text(data);
           }
         });
     });
@@ -124,6 +136,7 @@
   // 선박 버튼
   $("#btnVessel").click(fnChangeVessel);
 
+
   function inputValid() {
     const inputVal = $(this).val();
     const errorText = $(this).next('.error-text');
@@ -138,17 +151,16 @@
     }
   }
 
-
   function fnClickTrans() {
 
     var width = $("#width").val();
     var height = $("#height").val();
     var vertical = $("#vertical").val();
-    var xChuk = $("#xChuk").val();
-    var yChuk = $("#yChuk").val();
-    var zChuk = $("#zChuk").val();
+    var x_chuk = $("#x_chuk").val();
+    var y_chuk = $("#y_chuk").val();
+    var z_chuk = $("#z_chuk").val();
 
-    var valList = [ width, height, vertical, xChuk, yChuk, zChuk ];
+    var valList = [ width, height, vertical, x_chuk, y_chuk, z_chuk ];
 
     setTransData(valList);
 

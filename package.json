@@ -20,7 +20,8 @@
     "react-scripts": "^5.0.1",
     "run": "^1.4.0",
     "start": "^5.1.0",
-    "three": "^0.115.0"
+    "three": "^0.115.0",
+    "tween.js": "^16.6.0"
   },
   "devDependencies": {
     "prettier": "^2.0.4",
