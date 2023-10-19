@@ -41,13 +41,13 @@
 
             <!-- 모달 본문 -->
             <div class="modal-body">
-                <input type="text" id="title" name="title" placeholder="제목을 입력하세요."/><br><br>
-                <textarea rows="4" cols="50" id="bigo" name="bigo" placeholder="내용을 입력하세요."></textarea>
+                <input type="text" id="title" name="title" placeholder="제목을 입력하세요." autocomplete="off"/><br><br>
+                <textarea rows="4" cols="50" id="bigo" name="bigo" placeholder="내용을 입력하세요." autocomplete="off"></textarea>
             </div>
 
             <!-- 모달 푸터 -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" id="modalSave">저장</button>
+                <button type="button" class="btn btn-success" id="btnModalSave">저장</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
             </div>
 
@@ -57,18 +57,19 @@
 
 
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
+    
       <div style="text-align: right;">
         <button id="btnNon" class="btn btn-light">논</button>
         <button id="btnVessel" class="btn btn-light">선박</button>
       </div>
     
       <div>
-        가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요."/><span class="error-text"></span><br>
-        세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요."/><span class="error-text"></span><br>
-        높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요."/><span class="error-text"></span><br>
-        X축&nbsp; : <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Y축&nbsp; : <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요."/><span class="error-text"></span><br>
-        Z축&nbsp; : <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요."/><span class="error-text"></span><br><br>
+        가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        X축&nbsp; : <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        Y축&nbsp; : <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        Z축&nbsp; : <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br><br>
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
@@ -85,35 +86,8 @@
     $(document).ready(function() {
 
       $("#width").focus();
+
       defaultPage();
-
-      const getDataButton = $('#btnSave');
-
-      getDataButton.click(function() {
-        // 겟요청 코드
-        //  $.get('http://localhost:7000/api/data', function(data) {
-        //   $('#result').text('백엔드로부터 받은 데이터: ' + data);
-        // });
-
-        const dataToSend = {
-          width: $("#width").val(),
-          height: $("#height").val(),
-          vertical: $("#vertical").val(),
-          x_chuk: $("#x_chuk").val(),
-          y_chuk: $("#y_chuk").val(),
-          z_chuk: $("#z_chuk").val()
-        };
-
-        $.ajax({
-          type: "POST",
-          url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
-          data: JSON.stringify(dataToSend),
-          contentType: 'application/json',
-          success: function(data) {
-            console.log("성공!!:" + data)
-          }
-        });
-    });
 
   });
         
@@ -129,6 +103,12 @@
 
   // 초기화 버튼
   $("#btnReset").click(fnClickReset);
+
+  // 저장 버튼
+  $("#btnSave").click(fnClickSave);
+
+  // 모달 저장 버튼 (실제 저장)
+  $("#btnModalSave").click(fnClickModalSave);
 
   // 논 버튼
   $("#btnNon").click(fnChangeNon);
@@ -172,6 +152,44 @@
 
   function fnClickReset(){
     setResetData();
+  }
+
+  function fnClickSave(){
+  
+    // 이제 모달창 뜨게 소스짜야함
+
+  }
+
+  function fnClickModalSave(){
+
+    // 겟요청 코드
+    //  $.get('http://localhost:7000/api/data', function(data) {
+    //   $('#result').text('백엔드로부터 받은 데이터: ' + data);
+    // });
+
+    const dataToSend = {
+      title: $("#title").val(),
+      bigo: $("#bigo").val(),
+      width: $("#width").val(),
+      height: $("#height").val(),
+      vertical: $("#vertical").val(),
+      x_chuk: $("#x_chuk").val(),
+      y_chuk: $("#y_chuk").val(),
+      z_chuk: $("#z_chuk").val()
+    };
+
+    console.log(dataToSend)
+
+    $.ajax({
+      type: "POST",
+      url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
+      data: JSON.stringify(dataToSend),
+      contentType: 'application/json',
+      success: function(data) {
+        console.log("결과는 :" + data)
+      }
+    }); 
+
   }
 
   function fnChangeNon(){

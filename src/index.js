@@ -79,6 +79,7 @@ if (WEBGL.isWebGLAvailable()) {
 
     // OrbitControls 추가
     controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableZoom = false; // 확대, 축소 비활성화
     controls.addEventListener('change', render)
 
     // DragControls 추가
@@ -96,6 +97,7 @@ if (WEBGL.isWebGLAvailable()) {
 
     convertScene(val);
 
+    
   }
 
   function onWindowResize() {
