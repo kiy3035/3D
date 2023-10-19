@@ -94,9 +94,10 @@ if (WEBGL.isWebGLAvailable()) {
     document.addEventListener('keydown', onDocumentKeyDown, false)
     document.addEventListener('keyup', onDocumentKeyUp, false)
     window.addEventListener('resize', onWindowResize, false)
+    document.addEventListener('contextmenu', onRightClick, false);
 
     convertScene(val);
-    
+
   }
 
   function onWindowResize() {
@@ -134,6 +135,8 @@ if (WEBGL.isWebGLAvailable()) {
         return false;
     }
 
+    scene.add(rollOverMesh) // 도형 추가 시 rollOverMesh 다시 추가
+
     mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
@@ -143,11 +146,7 @@ if (WEBGL.isWebGLAvailable()) {
     var intersects = raycaster.intersectObjects(objects)
 
     if (intersects.length > 0) {
-      
-      for(var i = 0; i < intersects.length; i++){
-        var selectedObject = intersects[i].object;
-      }
-      
+            
       var intersect = intersects[0]
       
       if (isShiftDown) {
@@ -333,7 +332,7 @@ window.defaultPage = function(){
   const animate = () => {
     requestAnimationFrame(animate);
 
-     // 각 상자를 회전
+    // 각 상자를 회전
     boxes.forEach((box) => {
       box.rotation.x += 0.01;
       box.rotation.y += 0.01;
@@ -345,37 +344,29 @@ window.defaultPage = function(){
   animate();
 }
 
-// 마우스 우클릭 (도형 삭제)
-document.addEventListener('contextmenu', onRightClick, false);
+
 function onRightClick(event) {
   event.preventDefault();
+  scene.remove(rollOverMesh)
 
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
 
   if (intersects.length > 0) {
-    const clickedObject = intersects[0].object;
+    var clickedObject = intersects[0].object;
 
     if (clickedObject.isMesh) {
-        scene.remove(clickedObject);
+      scene.remove(clickedObject);
+      clickedObject.geometry.dispose();
+      clickedObject.material.dispose();
+      
+      if(cubeUUIDList[cubeUUIDList.length - 1] == clickedObject.uuid){
+        cubeUUIDList.pop(); // 배열에서도 삭제
+        clickedObject = null;
+      }
     }
-
-
+    
   }
-
-  var rollOverMaterial = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    opacity: 0.5,
-    transparent: true,
-  });
-
- // 빨간색 외관을 가진 객체를 생성 (여기에서는 BoxGeometry 사용)
-var objectGeometry = new THREE.BoxBufferGeometry(50, 50, 50);
-var objectMesh = new THREE.Mesh(objectGeometry, rollOverMaterial);
-
-// scene에 빨간색 외관을 가진 객체를 추가 (추가하기 전에 rollOverMesh를 scene에서 제거)
-scene.add(objectMesh);
-
-
- }
+  
+}
 
