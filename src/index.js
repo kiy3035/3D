@@ -288,16 +288,19 @@ window.defaultPage = function(){
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
-  // 회색 상자를 생성하고 배열에 추가
-const boxes = [];
-for (let i = 0; i < 3; i++) {
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
-  const material = new THREE.MeshPhongMaterial({ color: 0x808080 });
-  const cube = new THREE.Mesh(geometry, material);
-  cube.position.x = i * 2; // 각 상자를 가로로 2단위 간격으로 배치
-  scene.add(cube);
-  boxes.push(cube);
-}
+  const cubeMaterial = new THREE.MeshLambertMaterial({
+    map: new THREE.TextureLoader().load('static/textures/container.jpg'),
+  })
+
+  const boxes = [];
+
+  for (let i = 0; i < 3; i++) {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const cube = new THREE.Mesh(geometry, cubeMaterial);
+    cube.position.x = i * 3;
+    scene.add(cube);
+    boxes.push(cube);
+  }
 
   const light = new THREE.PointLight(0xffffff);
   light.position.set(10, 10, 10);
@@ -313,7 +316,7 @@ for (let i = 0; i < 3; i++) {
   window.addEventListener('resize', onWindowResize);
 
   camera.position.set(0, 0, 5); // 카메라 위치를 중앙으로 이동
-  camera.lookAt(0, 0, 0); // 카메라가 원점을 향하도록 설정
+  camera.lookAt(2.5, 0, 0); // 카메라가 원점을 향하도록 설정
 
   // 애니메이션 루프
   const animate = () => {
