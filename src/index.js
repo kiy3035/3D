@@ -96,7 +96,6 @@ if (WEBGL.isWebGLAvailable()) {
     window.addEventListener('resize', onWindowResize, false)
 
     convertScene(val);
-
     
   }
 
@@ -129,6 +128,12 @@ if (WEBGL.isWebGLAvailable()) {
   }
 
   function onDocumentMouseDown(event) {
+
+    if (event.button === 2) { // 0 : 좌클릭, 2 : 우클릭
+        event.preventDefault();
+        return false;
+    }
+
     mouse.set(
       (event.clientX / window.innerWidth) * 2 - 1,
       -(event.clientY / window.innerHeight) * 2 + 1
@@ -138,6 +143,11 @@ if (WEBGL.isWebGLAvailable()) {
     var intersects = raycaster.intersectObjects(objects)
 
     if (intersects.length > 0) {
+      
+      for(var i = 0; i < intersects.length; i++){
+        var selectedObject = intersects[i].object;
+      }
+      
       var intersect = intersects[0]
       
       if (isShiftDown) {
@@ -158,7 +168,9 @@ if (WEBGL.isWebGLAvailable()) {
         }
         scene.add(voxel)
         objects.push(voxel)
-        console.log(voxel)
+        cubeUUIDList.push(voxel.uuid);
+        console.log(cubeUUIDList)
+       
       }
 
       render()
@@ -264,14 +276,11 @@ function convertScene(val) {
 
     var backImg;
 
-    if (val == "non") {
+  if (val == "non") {
     backImg = textureLoader.load('static/backgroundimages/non.jpg')
-    console.log("non2:" + backImg)
-
-    } else if (val == "vessel") {
+  } else if (val == "vessel") {
     backImg = textureLoader.load('static/backgroundimages/vessel.png')
-    console.log("vessel2:" + backImg)
-   }
+  }
 
   scene.background = backImg;
   renderer.render(scene, camera);
@@ -279,7 +288,7 @@ function convertScene(val) {
   
 }
 
-
+// 첫화면 설정
 window.defaultPage = function(){
 
   const scene = new THREE.Scene();
@@ -335,3 +344,38 @@ window.defaultPage = function(){
 
   animate();
 }
+
+// 마우스 우클릭 (도형 삭제)
+document.addEventListener('contextmenu', onRightClick, false);
+function onRightClick(event) {
+  event.preventDefault();
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(scene.children, true);
+
+  if (intersects.length > 0) {
+    const clickedObject = intersects[0].object;
+
+    if (clickedObject.isMesh) {
+        scene.remove(clickedObject);
+    }
+
+
+  }
+
+  var rollOverMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    opacity: 0.5,
+    transparent: true,
+  });
+
+ // 빨간색 외관을 가진 객체를 생성 (여기에서는 BoxGeometry 사용)
+var objectGeometry = new THREE.BoxBufferGeometry(50, 50, 50);
+var objectMesh = new THREE.Mesh(objectGeometry, rollOverMaterial);
+
+// scene에 빨간색 외관을 가진 객체를 추가 (추가하기 전에 rollOverMesh를 scene에서 제거)
+scene.add(objectMesh);
+
+
+ }
+
