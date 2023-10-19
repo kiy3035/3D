@@ -29,8 +29,40 @@
   <body>
 
   <div id="myGroup" style="position:absolute"> 
-    <!-- 모달 -->
-    <div class="modal" id="myModal">
+
+
+      <!-- 사용설명서 모달 -->
+      <div class="modal" id="userGuideModal">
+          <div class="modal-dialog">
+              <div class="modal-content">
+  
+                <!-- 모달 헤더 -->
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <h4 class="modal-title" style="text-align: center; font-weight: bold; font-size: 24px;">사용설명서</h4>
+                </div>
+  
+                <!-- 모달 본문 -->
+                <div class="modal-body">
+                    <li>가로, 세로, 높이 입력칸은 도면에 그리고자 하는 적재 물품의 가로, 세로, 높이 길이를 입력해주세요.</li><br>
+                    <li>x축의 값이 커질 수록 사물이 오른쪽으로 이동합니다.</li><br>
+                    <li>y축의 값이 커질 수록 사물이 수직 방향으로 이동합니다.</li><br>
+                    <li>z축의 값이 커질 수록 사물이 사용자 방향으로 가까워집니다.</li><br>
+                    <li>더 많은 정보가 궁금하시면 <a href="https://threejs.org" target="_blank">이곳</a>을 방문해주세요.</li>
+                </div>
+  
+                <!-- 모달 푸터 -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+  
+              </div>
+          </div>
+      </div>
+
+
+    <!-- 저장 모달 -->
+    <div class="modal" id="InfoSaveModal">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -58,13 +90,13 @@
 
   
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
-    
-      <div style="text-align: right;">
-        <button id="btnNon" class="btn btn-light">논</button>
-        <button id="btnVessel" class="btn btn-light">선박</button>
+      <div>
+        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#userGuideModal" style="float: left;">사용설명서</button>
+        <button id="btnVessel" class="btn btn-light" style="float: right; margin-left: 5px;">선박</button>
+        <button id="btnNon" class="btn btn-light" style="float: right;">논</button>
       </div>
     
-      <div>
+      <br><br>
         가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
         세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
         높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
@@ -74,8 +106,8 @@
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
-        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#myModal">정보 입력</button>
-        <button type="button" class="btn btn-primary" id="btnSave"> 저장 </button>
+        <button type="button" class="btn btn-primary" id="btnOpenModal" data-toggle="modal" data-target="#InfoSaveModal">저장</button>
+        <button type="button" class="btn btn-light" id="btnSearch"> 조회 </button>
       </div>
   </div>
     
@@ -106,12 +138,12 @@
   // 초기화 버튼
   $("#btnReset").click(fnClickReset);
 
-  // 저장 버튼
-  $("#btnSave").click(fnClickSave);
-
-  // 모달 저장 버튼 (실제 저장)
+  // 모달내부 저장 버튼 (실제 저장)
   $("#btnModalSave").click(fnClickModalSave);
 
+  // 조회 버튼
+  $("#btnSearch").click(fnClickSearch);
+  
   // 논 버튼
   $("#btnNon").click(fnChangeNon);
 
@@ -156,10 +188,6 @@
     setResetData();
   }
 
-  function fnClickSave(){
-    $("#btnInfo").click();
-  }
-
   function fnClickModalSave(){
 
     // 겟요청 코드
@@ -199,6 +227,12 @@
     }); 
 
   }
+
+  
+  function fnClickSearch(){
+    alert("조회서비스 준비중")
+  }
+
 
   function fnChangeNon(){
     if($("#btnVessel").hasClass("btn btn-success")){
