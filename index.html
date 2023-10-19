@@ -41,8 +41,8 @@
 
             <!-- 모달 본문 -->
             <div class="modal-body">
-                <input type="text" id="modalTitle" name="modalTitle" placeholder="제목을 입력하세요."/><br><br>
-                <textarea rows="4" cols="50" id="modalContent" name="modalContent" placeholder="내용을 입력하세요."></textarea>
+                <input type="text" id="title" name="title" placeholder="제목을 입력하세요."/><br><br>
+                <textarea rows="4" cols="50" id="bigo" name="bigo" placeholder="내용을 입력하세요."></textarea>
             </div>
 
             <!-- 모달 푸터 -->
@@ -58,8 +58,8 @@
 
     <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
       <div style="text-align: right;">
-        <button id="btnNon">논</button>
-        <button id="btnVessel">선박</button>
+        <button id="btnNon" class="btn btn-light">논</button>
+        <button id="btnVessel" class="btn btn-light">선박</button>
       </div>
     
       <div>
@@ -72,8 +72,8 @@
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">정보 입력</button>
-        <button type="button" id="btnSave"> 저장 </button>
+        <button type="button" class="btn btn-light" data-toggle="modal" data-target="#myModal">정보 입력</button>
+        <button type="button" class="btn btn-primary" id="btnSave"> 저장 </button>
       </div>
     
     <script src="public/bundle.js"></script>
@@ -175,10 +175,20 @@
   }
 
   function fnChangeNon(){
+    if($("#btnVessel").hasClass("btn btn-success")){
+      $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
+    }
+    $("#btnNon").removeClass("btn btn-light").addClass("btn btn-success")
+
     init("non")
   }
 
   function fnChangeVessel(){
+    if($("#btnNon").hasClass("btn btn-success")){
+      $("#btnNon").removeClass("btn btn-success").addClass("btn btn-light")
+    }
+    $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
+
     init("vessel")
   }
 
