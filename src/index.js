@@ -201,25 +201,51 @@ if (WEBGL.isWebGLAvailable()) {
 }
 
 // 적용 버튼 함수
-window.setTransData = function(value) {
+window.setTransData = function(value, type) {
 
-  var value2 = value.map(str => parseInt(str)); // String -> int 변환
+  // DB 거쳐서 data 다 불러올 떄
+  if(type == "ajax"){
+    if(value[0].SCENE == "wh"){
+      init("warehouse")
+    }else if(value[0].SCENE == "vs"){
+      init("vessel")
+    }
 
-  var intersects = raycaster.intersectObjects(objects);
-  var intersect;
+    for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
+      delete value[i].SCENE;
+      delete value[i].TITLE;
+    }
 
-  if (intersects.length > 0) {
-    intersect = intersects[0]
+    console.log(value)
+
+    var intersects = raycaster.intersectObjects(objects);
+    var intersect;
+
+    if (intersects.length > 0) {
+      intersect = intersects[0]
+    }
+    
+    for(var i = 0; i < value.length; i ++){
+      cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+      cube.scale.set(value[i].WIDTH, value[i].VERTICAL, value[i].HEIGHT);
+      cube.position.set(value[i].X_CHUK, value[i].Y_CHUK, value[i].Z_CHUK);
+      scene.add(cube);
+      cubeUUIDList.push(cube.uuid);
+    }
+
+  }else{ // 그냥 적용버튼으로 하나씩 도형 만들 때
+
+    var value2 = value.map(str => parseInt(str)); // String -> int 변환
+    
+    cube = new THREE.Mesh(cubeGeo, cubeMaterial);
+    cube.scale.set(value2[0], value2[2], value2[1]);
+    cube.position.set(value2[3], value2[4], value2[5]);
+    scene.add(cube);
+
+    cubeUUIDList.push(cube.uuid);
+    console.log(cube)
   }
-
-  cube = new THREE.Mesh(cubeGeo, cubeMaterial);
-
-  cube.scale.set(value2[0], value2[2], value2[1]);
-  cube.position.set(value2[3], value2[4], value2[5]);
-  scene.add(cube);
-
-  cubeUUIDList.push(cube.uuid);
-  console.log(cube)
+  
 }
 
 // 이전 버튼 함수
@@ -255,7 +281,6 @@ window.setResetData = function() {
   cubeUUIDList = []; // 배열 초기화
   
 }
-var scenes = []; // scenes 배열을 정의
 
 // 화면 전환
 function convertScene(val) {
@@ -275,8 +300,8 @@ function convertScene(val) {
 
     var backImg;
 
-  if (val == "non") {
-    backImg = textureLoader.load('static/backgroundimages/non.jpg')
+  if (val == "warehouse") {
+    backImg = textureLoader.load('static/backgroundimages/warehouse.jpg')
   } else if (val == "vessel") {
     backImg = textureLoader.load('static/backgroundimages/vessel.png')
   }
@@ -367,6 +392,6 @@ function onRightClick(event) {
     }
     
   }
-  
+
 }
 

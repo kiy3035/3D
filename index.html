@@ -18,10 +18,26 @@
     <title>3D 창고 시뮬레이션</title>
 
     <style>
+      /* 에러 메세지 */
       .error-text {
           color: red;
       }
-      
+      /* 테이블 스타일 */
+      table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0 auto;
+      }
+      /* 테이블 셀 스타일 */
+      th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+      }
+      /* 짝수 행 배경색 설정 */
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+      }
     </style>
 
   </head>
@@ -47,7 +63,7 @@
                     <li>x축의 값이 커질수록 사물이 오른쪽으로 이동합니다.</li><br>
                     <li>y축의 값이 커질수록 사물이 윗쪽으로 이동합니다.</li><br>
                     <li>z축의 값이 커질수록 사물이 사용자 방향으로 가까워집니다.</li><br>
-                    <li>마우스 우클릭 시 그림자가 사라지면서 해당 도형이 삭제됩니다.</li><br>
+                    <li>마우스 우클릭 시 그림자가 사라지면서 해당 도형이 <u>삭제</u>됩니다.</li><br>
                     <li>더 많은 정보가 궁금하시면 <a href="https://threejs.org" target="_blank">이곳</a>을 방문해주세요.</li>
                 </div>
   
@@ -88,26 +104,62 @@
         </div>
     </div>
 
+
+    <!-- 조회 모달 -->
+    <div class="modal" id="searchTitles">
+      <div class="modal-dialog">
+          <div class="modal-content">
+
+            <!-- 모달 헤더 -->
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title" style="text-align: center; font-weight: bold; font-size: 24px;">목록</h4>
+            </div>
+
+            <!-- 모달 본문 -->
+            <div class="modal-body">
+              <table>
+                <thead>
+                    <tr>
+                        <th>제목</th>
+                        <th>내용</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+                
+            </div>
+
+            <!-- 모달 푸터 -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+
+          </div>
+      </div>
+    </div>
+
   
-    <h3 style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
+    <h3 id="bigTitle" style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
       <div>
         <button type="button" class="btn btn-info" data-toggle="modal" data-target="#userGuideModal" style="float: left;">사용설명서</button>
-        <button id="btnVessel" class="btn btn-light" style="float: right; margin-left: 5px;">선박</button>
-        <button id="btnNon" class="btn btn-light" style="float: right;">논</button>
+        <button id="btnVessel" name="sceneList" value="vs" class="btn btn-light" style="float: right; margin-left: 5px;">선박</button>
+        <button id="btnWarehouse" name="sceneList" value="wh" class="btn btn-light" style="float: right;">창고</button>
       </div>
     
       <br><br>
-        가로 : <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        세로 : <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        높이 : <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        X축&nbsp; : <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        Y축&nbsp; : <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        Z축&nbsp; : <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br><br>
+        <span class="white-text">가로 :</span> <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        <span class="white-text">세로 :</span> <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        <span class="white-text">높이 :</span> <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        <span class="white-text">X축 :</span>&nbsp;  <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        <span class="white-text">Y축 :</span>&nbsp;  <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
+        <span class="white-text">Z축 :</span>&nbsp;  <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br><br>
         <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
         <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
-        <button type="button" class="btn btn-primary" id="btnOpenModal" data-toggle="modal" data-target="#InfoSaveModal">저장</button>
-        <button type="button" class="btn btn-light" id="btnSearch"> 조회 </button>
+        <button type="button" class="btn btn-primary" id="btnSave" data-toggle="modal" data-target="#InfoSaveModal">저장</button>
+        <button type="button" class="btn btn-light" id="btnSearch" data-toggle="modal" data-target="#searchTitles"> 조회 </button>
       </div>
   </div>
     
@@ -117,11 +169,18 @@
   </body>
 
   <script>
+   
+    var scene;
+
     $(document).ready(function() {
+
+      defaultPage();
 
       $("#width").focus();
 
-      defaultPage();
+      $("button[name='sceneList']").click(function() {
+        scene = $(this).val();
+      });
 
   });
         
@@ -138,14 +197,17 @@
   // 초기화 버튼
   $("#btnReset").click(fnClickReset);
 
+  // 저장 버튼
+  $("#btnSave").click(fnClickSave);
+
   // 모달내부 저장 버튼 (실제 저장)
   $("#btnModalSave").click(fnClickModalSave);
 
   // 조회 버튼
   $("#btnSearch").click(fnClickSearch);
   
-  // 논 버튼
-  $("#btnNon").click(fnChangeNon);
+  // 창고 버튼
+  $("#btnWarehouse").click(fnChangeWarehouse);
 
   // 선박 버튼
   $("#btnVessel").click(fnChangeVessel);
@@ -165,35 +227,44 @@
     }
   }
 
-  function fnClickTrans() {
+  function fnClickTrans(val) {
 
-    var width = $("#width").val();
-    var height = $("#height").val();
-    var vertical = $("#vertical").val();
-    var x_chuk = $("#x_chuk").val();
-    var y_chuk = $("#y_chuk").val();
-    var z_chuk = $("#z_chuk").val();
+    if(val.length != undefined){
+      setTransData(val, "ajax");
+    }else{
+      var width = $("#width").val();
+      var height = $("#height").val();
+      var vertical = $("#vertical").val();
+      var x_chuk = $("#x_chuk").val();
+      var y_chuk = $("#y_chuk").val();
+      var z_chuk = $("#z_chuk").val();
 
-    var valList = [ width, height, vertical, x_chuk, y_chuk, z_chuk ];
+      var valList = [ width, height, vertical, x_chuk, y_chuk, z_chuk ];
 
-    setTransData(valList);
-
+      setTransData(valList);
+    }
   }
   
   function fnClickPrev(){
     setPrevData();
   }
 
+
   function fnClickReset(){
     setResetData();
   }
 
-  function fnClickModalSave(){
 
-    // 겟요청 코드
-    //  $.get('http://localhost:7000/api/data', function(data) {
-    //   $('#result').text('백엔드로부터 받은 데이터: ' + data);
-    // });
+  function fnClickSave(){
+    var obj = $(".btn.btn-success:not(#btnModalSave)").val(); // 클래스가 btn.btn-success 인 애들 중에서 아이디는 btnModalSave 얘가 아닌 애들 ( = 창고, 선박)
+    if(obj == ''){ // 첫화면일때
+      alert("창고, 선박 둘 중 선택하고 저장하세요.");
+      return false;
+    }
+  }
+
+
+  function fnClickModalSave(){
 
     const dataToSend = {
       title: $("#title").val(),
@@ -203,7 +274,8 @@
       vertical: $("#vertical").val(),
       x_chuk: $("#x_chuk").val(),
       y_chuk: $("#y_chuk").val(),
-      z_chuk: $("#z_chuk").val()
+      z_chuk: $("#z_chuk").val(),
+      scene: scene
     };
 
     const fieldIds = ["title", "width", "height", "vertical", "x_chuk", "y_chuk", "z_chuk"]; // bigo 는 null 허용
@@ -222,37 +294,92 @@
       data: JSON.stringify(dataToSend),
       contentType: 'application/json',
       success: function(data) {
-        console.log("결과는 :" + data)
+        $("#InfoSaveModal").modal("hide");
       }
     }); 
 
+      $("input").val(null); // 모든 input 값 초기화
   }
 
-  
+
   function fnClickSearch(){
-    alert("조회서비스 준비중")
+
+     $.get('http://localhost:7000/api/getTitles', function(data) {
+      
+      var clickedTitle;
+      var tableBody = document.querySelector("#searchTitles table tbody");
+          tableBody.innerHTML = '';
+
+      for (let i = 0; i < data.length; i++) {
+          var row = tableBody.insertRow(i);
+          var titleCell = row.insertCell(0); // 첫번째 컬럼
+          var contentCell = row.insertCell(1); // 두번쨰 컬럼
+
+          titleCell.textContent = data[i].TITLE;
+          contentCell.textContent = data[i].BIGO;
+          titleCell.style.cursor = 'pointer';
+          titleCell.style.color = 'blue';
+
+          titleCell.addEventListener('click', function () {
+            
+            var clickedTitle = data[i].TITLE;
+            
+            fnSetDatas(clickedTitle);
+          });
+
+        }
+        
+    });
+
   }
 
 
-  function fnChangeNon(){
+  function fnChangeWarehouse(){
     if($("#btnVessel").hasClass("btn btn-success")){
       $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
     }
-    $("#btnNon").removeClass("btn btn-light").addClass("btn btn-success")
+    $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success")
 
-    init("non")
+    init("warehouse")
+
+    changeCSS()
   }
 
+
   function fnChangeVessel(){
-    if($("#btnNon").hasClass("btn btn-success")){
-      $("#btnNon").removeClass("btn btn-success").addClass("btn btn-light")
+    if($("#btnWarehouse").hasClass("btn btn-success")){
+      $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light")
     }
     $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
 
     init("vessel")
+
+    changeCSS()
   }
 
- 
+
+ function changeCSS(){
+
+  $("#bigTitle").css('color', 'white');
+  $(".white-text").css("color", "white");
+
+}
+
+
+function fnSetDatas(val){
+    
+  $.ajax({
+    type: "POST",
+    url: "http://localhost:7000/api/getDatas",
+    data: JSON.stringify(val),
+    contentType: 'application/json',
+    success: function(data) {
+      $('#searchTitles').modal('hide');
+      fnClickTrans(data)
+    }
+  }); 
+
+}
 
 </script>
 
