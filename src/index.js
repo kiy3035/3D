@@ -21,7 +21,7 @@ if (WEBGL.isWebGLAvailable()) {
   var cubeUUIDList = [];
 
 
-  window.init = function(val) {
+  window.init = function(val, src) {
     camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -46,7 +46,7 @@ if (WEBGL.isWebGLAvailable()) {
     cubeGeo = new THREE.BoxBufferGeometry(50, 50, 50)
     cubeMaterial = new THREE.MeshLambertMaterial({
       // color: 0xfeb74c,
-      map: new THREE.TextureLoader().load('static/textures/container.jpg'),
+      map: new THREE.TextureLoader().load(src),
     })
 
     var gridHelper = new THREE.GridHelper(1000, 20)
@@ -133,7 +133,6 @@ if (WEBGL.isWebGLAvailable()) {
 
     if (event.button === 2) { // 0 : 좌클릭, 2 : 우클릭
         event.preventDefault();
-        
         return false;
     }
 
@@ -212,19 +211,19 @@ if (WEBGL.isWebGLAvailable()) {
 }
 
 // 적용 버튼 함수
-window.setTransData = function(value, type) {
+window.setTransData = function(value, type, src) {
 
   // DB 거쳐서 data 다 불러올 떄
-  if(type == "ajax"){
-    if(value[0].scene == "wh"){
-      init("warehouse")
-    }else if(value[0].scene == "vs"){
-      init("vessel")
+  if(type == "DB"){
+    if(value[0].SCENE == "wh"){
+      init("warehouse", src)
+    }else if(value[0].SCENE == "vs"){
+      init("vessel", src)
     }
 
     for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
-      delete value[i].scene;
-      delete value[i].title;
+      delete value[i].SCENE;
+      delete value[i].TITLE;
     }
 
     console.log(value)
@@ -238,8 +237,8 @@ window.setTransData = function(value, type) {
     
     for(var i = 0; i < value.length; i ++){
       cube = new THREE.Mesh(cubeGeo, cubeMaterial);
-      cube.scale.set(value[i].width, value[i].vertical, value[i].height);
-      cube.position.set(value[i].x_chuk, value[i].y_chuk, value[i].z_chuk);
+      cube.scale.set(value[i].WIDTH, value[i].VERTICAL, value[i].HEIGHT);
+      cube.position.set(value[i].X_CHUK, value[i].Y_CHUK, value[i].Z_CHUK);
       scene.add(cube);
       cubeUUIDList.push(cube.uuid);
     }
@@ -256,8 +255,8 @@ window.setTransData = function(value, type) {
     cubeUUIDList.push(cube.uuid);
     console.log(cube)
 
-    // shapeData 배열에 데이터 추가
-    var data = {
+     // shapeData 배열에 데이터 추가
+     var data = {
       x_chuk: value2[3],
       y_chuk: value2[4],
       z_chuk: value2[5],
@@ -266,7 +265,7 @@ window.setTransData = function(value, type) {
       vertical: value2[1],
       uuid: cube.uuid
     };
-    debugger;
+    
     shapeData.push(data);
 
   }
@@ -276,7 +275,7 @@ window.setTransData = function(value, type) {
 // 이전 버튼 함수
 window.setPrevData = function() {
 
-  if (cubeUUIDList.length > 0) { 
+  if (cubeUUIDList.length > 0) {
     var lastCubeUUID = cubeUUIDList.pop();
     var cubeToRemove = scene.getObjectByProperty("uuid", lastCubeUUID);
     
@@ -284,6 +283,7 @@ window.setPrevData = function() {
       scene.remove(cubeToRemove);
       cubeToRemove.geometry.dispose();
       cubeToRemove.material.dispose();
+
 
       // UUID에 해당하는 데이터를 shapeData 배열에서 제거
       shapeData = shapeData.filter(data => data.uuid !== lastCubeUUID);
@@ -306,8 +306,9 @@ window.setResetData = function() {
     }
   }
   
-  cubeUUIDList = []; // cubeUUIDList 배열 초기화
+  cubeUUIDList = []; // 배열 초기화
   shapeData = []; // shapeData 배열 초기화
+
   
 }
 
@@ -342,7 +343,7 @@ function convertScene(val) {
 }
 
 // 첫화면 설정
-window.defaultPage = function(){
+window.defaultPage = function(src){
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff)
@@ -353,7 +354,7 @@ window.defaultPage = function(){
   document.body.appendChild(renderer.domElement);
 
   const cubeMaterial = new THREE.MeshLambertMaterial({
-    map: new THREE.TextureLoader().load('static/textures/container.jpg'),
+    map: new THREE.TextureLoader().load(src),
   })
 
   const boxes = [];
@@ -414,12 +415,14 @@ function onRightClick(event) {
       clickedObject.geometry.dispose();
       clickedObject.material.dispose();
       
+      
       if(cubeUUIDList[cubeUUIDList.length - 1] == clickedObject.uuid){
-        cubeUUIDList.pop(); // 배열에서도 삭제
-        clickedObject = null;
 
         // UUID에 해당하는 데이터를 shapeData 배열에서 제거
         shapeData = shapeData.filter(data => data.uuid !== clickedObject.uuid);
+
+        cubeUUIDList.pop(); // 배열에서도 삭제
+        clickedObject = null;
       }
     }
     
@@ -441,7 +444,7 @@ function addShapeToData(voxel) {
       height: voxel.scale.y,
       vertical: voxel.scale.z,
       uuid: voxel.uuid
-    // }
+      // }
   };
   shapeData.push(data);
 }

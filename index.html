@@ -171,16 +171,26 @@
   <script>
    
     var scene;
+    var selectedContainer;
 
     $(document).ready(function() {
 
-      defaultPage();
-
       $("#width").focus();
-
+      
       $("button[name='sceneList']").click(function() {
         scene = $(this).val();
       });
+      
+      // 로컬 스토리지에서 값을 불러오기
+      selectedContainer = localStorage.getItem('selectedContainer');
+      
+      if (selectedContainer) {
+        console.log('불러온 값:' + selectedContainer);
+      } else {
+        console.log('불러온 값 X');
+      }
+      
+      defaultPage(selectedContainer);
 
   });
         
@@ -227,10 +237,10 @@
     }
   }
 
-  function fnClickTrans(val) {
-
+  function fnClickTrans(val, src) {
+    
     if(val.length != undefined){
-      setTransData(val, "ajax");
+      setTransData(val, 'DB', src);
     }else{
       var width = $("#width").val();
       var height = $("#height").val();
@@ -241,7 +251,7 @@
 
       var valList = [ width, height, vertical, x_chuk, y_chuk, z_chuk ];
 
-      setTransData(valList);
+      setTransData(valList, '', src);
     }
   }
   
@@ -282,13 +292,13 @@
     // var dataSet = dataSet();
     var dataToSend = window.dataSet();
     dataToSend.forEach(function(item) {
-      // 각 객체에 title과 bigo 필드 추가
-      item.title = $("#title").val(); 
-      item.bigo = $("#bigo").val();
-      item.scene = scene;
-      //delete item.uuid; // uuid 속성 삭제
+    // 각 객체에 title과 bigo 필드 추가
+    item.title = $("#title").val(); 
+    item.bigo = $("#bigo").val();
+    item.scene = scene;
+
     });
-    console.log("dataToSend : " + JSON.stringify(dataToSend))
+    console.log("dataSet : " + JSON.stringify(dataToSend))
     
     if (!dataToSend || dataToSend.length === 0) {
       alert("내용을 제외한 모든 필드를 작성해야 합니다.");
@@ -331,16 +341,15 @@
           var titleCell = row.insertCell(0); // 첫번째 컬럼
           var contentCell = row.insertCell(1); // 두번쨰 컬럼
 
-          titleCell.textContent = data[i].title;
-          contentCell.textContent = data[i].bigo;
+          titleCell.textContent = data[i].TITLE;
+          contentCell.textContent = data[i].BIGO;
           titleCell.style.cursor = 'pointer';
           titleCell.style.color = 'blue';
 
           titleCell.addEventListener('click', function () {
             
-            var clickedTitle = data[i].title;
-            
-            fnSetDatas(clickedTitle);
+            var clickedTitle = data[i].TITLE;
+            fnSetDatas(clickedTitle, selectedContainer);
           });
 
         }
@@ -351,12 +360,13 @@
 
 
   function fnChangeWarehouse(){
+    
     if($("#btnVessel").hasClass("btn btn-success")){
       $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
     }
     $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success")
 
-    init("warehouse")
+    init("warehouse", selectedContainer)
 
     changeCSS()
   }
@@ -368,7 +378,7 @@
     }
     $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
 
-    init("vessel")
+    init("vessel", selectedContainer)
 
     changeCSS()
   }
@@ -382,7 +392,7 @@
 }
 
 
-function fnSetDatas(val){
+function fnSetDatas(val, src){
     
   $.ajax({
     type: "POST",
@@ -391,7 +401,7 @@ function fnSetDatas(val){
     contentType: 'application/json',
     success: function(data) {
       $('#searchTitles').modal('hide');
-      fnClickTrans(data)
+      fnClickTrans(data, src)
     }
   }); 
 
