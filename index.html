@@ -282,17 +282,22 @@
     // var dataSet = dataSet();
     var dataToSend = window.dataSet();
     dataToSend.forEach(function(item) {
-    // 각 객체에 title과 bigo 필드 추가
-    item.title = $("#title").val(); 
-    item.bigo = $("#bigo").val();
-    item.scene = scene;
-
+      // 각 객체에 title과 bigo 필드 추가
+      item.title = $("#title").val(); 
+      item.bigo = $("#bigo").val();
+      item.scene = scene;
+      //delete item.uuid; // uuid 속성 삭제
     });
-    console.log("dataSet : " + JSON.stringify(dataToSend))
+    console.log("dataToSend : " + JSON.stringify(dataToSend))
     
-    for (const fieldId of fieldIds) {
-      const value = $("#" + fieldId).val();
-      if (!value) {
+    if (!dataToSend || dataToSend.length === 0) {
+      alert("내용을 제외한 모든 필드를 작성해야 합니다.");
+      return false;
+    }
+
+    for (var i = 0; i < dataToSend.length; i++) {
+      var item = dataToSend[i];
+      if (!item.title || !item.x_chuk || !item.y_chuk || !item.z_chuk || !item.width || !item.height || !item.vertical || !item.scene) {
         alert("내용을 제외한 모든 필드를 작성해야 합니다.");
         return false;
       }
@@ -326,14 +331,14 @@
           var titleCell = row.insertCell(0); // 첫번째 컬럼
           var contentCell = row.insertCell(1); // 두번쨰 컬럼
 
-          titleCell.textContent = data[i].TITLE;
-          contentCell.textContent = data[i].BIGO;
+          titleCell.textContent = data[i].title;
+          contentCell.textContent = data[i].bigo;
           titleCell.style.cursor = 'pointer';
           titleCell.style.color = 'blue';
 
           titleCell.addEventListener('click', function () {
             
-            var clickedTitle = data[i].TITLE;
+            var clickedTitle = data[i].title;
             
             fnSetDatas(clickedTitle);
           });

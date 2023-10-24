@@ -133,6 +133,7 @@ if (WEBGL.isWebGLAvailable()) {
 
     if (event.button === 2) { // 0 : 좌클릭, 2 : 우클릭
         event.preventDefault();
+        
         return false;
     }
 
@@ -215,15 +216,15 @@ window.setTransData = function(value, type) {
 
   // DB 거쳐서 data 다 불러올 떄
   if(type == "ajax"){
-    if(value[0].SCENE == "wh"){
+    if(value[0].scene == "wh"){
       init("warehouse")
-    }else if(value[0].SCENE == "vs"){
+    }else if(value[0].scene == "vs"){
       init("vessel")
     }
 
     for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
-      delete value[i].SCENE;
-      delete value[i].TITLE;
+      delete value[i].scene;
+      delete value[i].title;
     }
 
     console.log(value)
@@ -237,8 +238,8 @@ window.setTransData = function(value, type) {
     
     for(var i = 0; i < value.length; i ++){
       cube = new THREE.Mesh(cubeGeo, cubeMaterial);
-      cube.scale.set(value[i].WIDTH, value[i].VERTICAL, value[i].HEIGHT);
-      cube.position.set(value[i].X_CHUK, value[i].Y_CHUK, value[i].Z_CHUK);
+      cube.scale.set(value[i].width, value[i].vertical, value[i].height);
+      cube.position.set(value[i].x_chuk, value[i].y_chuk, value[i].z_chuk);
       scene.add(cube);
       cubeUUIDList.push(cube.uuid);
     }
@@ -254,6 +255,20 @@ window.setTransData = function(value, type) {
 
     cubeUUIDList.push(cube.uuid);
     console.log(cube)
+
+    // shapeData 배열에 데이터 추가
+    var data = {
+      x_chuk: value2[3],
+      y_chuk: value2[4],
+      z_chuk: value2[5],
+      width: value2[0],
+      height: value2[2],
+      vertical: value2[1],
+      uuid: cube.uuid
+    };
+    debugger;
+    shapeData.push(data);
+
   }
   
 }
@@ -261,7 +276,7 @@ window.setTransData = function(value, type) {
 // 이전 버튼 함수
 window.setPrevData = function() {
 
-  if (cubeUUIDList.length > 0) {
+  if (cubeUUIDList.length > 0) { 
     var lastCubeUUID = cubeUUIDList.pop();
     var cubeToRemove = scene.getObjectByProperty("uuid", lastCubeUUID);
     
@@ -269,6 +284,9 @@ window.setPrevData = function() {
       scene.remove(cubeToRemove);
       cubeToRemove.geometry.dispose();
       cubeToRemove.material.dispose();
+
+      // UUID에 해당하는 데이터를 shapeData 배열에서 제거
+      shapeData = shapeData.filter(data => data.uuid !== lastCubeUUID);
     }
   }
 
@@ -288,7 +306,8 @@ window.setResetData = function() {
     }
   }
   
-  cubeUUIDList = []; // 배열 초기화
+  cubeUUIDList = []; // cubeUUIDList 배열 초기화
+  shapeData = []; // shapeData 배열 초기화
   
 }
 
@@ -398,6 +417,9 @@ function onRightClick(event) {
       if(cubeUUIDList[cubeUUIDList.length - 1] == clickedObject.uuid){
         cubeUUIDList.pop(); // 배열에서도 삭제
         clickedObject = null;
+
+        // UUID에 해당하는 데이터를 shapeData 배열에서 제거
+        shapeData = shapeData.filter(data => data.uuid !== clickedObject.uuid);
       }
     }
     
@@ -417,7 +439,8 @@ function addShapeToData(voxel) {
       // voxel.scale : 컨테이너 크기 x = 가로, y = 세로, z = 높이
       width: voxel.scale.x,
       height: voxel.scale.y,
-      vertical: voxel.scale.z
+      vertical: voxel.scale.z,
+      uuid: voxel.uuid
     // }
   };
   shapeData.push(data);
