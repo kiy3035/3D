@@ -1,461 +1,158 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- jQuery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <!-- 테마 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <!-- 자바스크립트 -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    
-    <link rel="icon" href="static/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="static/styles/main.css">
-    <title>3D 창고 시뮬레이션</title>
-
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
     <style>
-      /* 에러 메세지 */
-      .error-text {
-          color: red;
-      }
-      /* 테이블 스타일 */
-      table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 0 auto;
-      }
-      /* 테이블 셀 스타일 */
-      th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-      }
-      /* 짝수 행 배경색 설정 */
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
-      }
+        body {
+            transition: background-color 0.5s ease; /* 배경 색상 변경에 대한 트랜지션 효과 */
+        }
     </style>
+</head>
+<body>
+</body>
 
-  </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script> <!-- THREE.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- 제이쿼리 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/17.2.0/Tween.min.js"></script> <!-- TWEEN.js -->
 
-  <body>
+<script>
 
-  <div id="myGroup" style="position:absolute"> 
+    var tween = new TWEEN.Tween();
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var renderer = new THREE.WebGLRenderer();
 
-      <!-- 사용설명서 모달 -->
-      <div class="modal" id="userGuideModal">
-          <div class="modal-dialog">
-              <div class="modal-content">
-  
-                <!-- 모달 헤더 -->
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
-                  <h4 class="modal-title" style="text-align: center; font-weight: bold; font-size: 24px;">사용설명서</h4>
-                </div>
-  
-                <!-- 모달 본문 -->
-                <div class="modal-body">
-                    <li>가로, 세로, 높이 입력칸은 도면에 그리고자 하는 적재 물품의 가로, 세로, 높이 길이입니다.</li><br>
-                    <li>x축의 값이 커질수록 사물이 오른쪽으로 이동합니다.</li><br>
-                    <li>y축의 값이 커질수록 사물이 윗쪽으로 이동합니다.</li><br>
-                    <li>z축의 값이 커질수록 사물이 사용자 방향으로 가까워집니다.</li><br>
-                    <li>마우스 우클릭 시 그림자가 사라지면서 해당 도형이 <u>삭제</u>됩니다.</li><br>
-                    <li>더 많은 정보가 궁금하시면 <a href="https://threejs.org" target="_blank">이곳</a>을 방문해주세요.</li>
-                </div>
-  
-                <!-- 모달 푸터 -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-                </div>
-  
-              </div>
-          </div>
-      </div>
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
+    // 뒤에 배경
+    var textureLoader = new THREE.TextureLoader();
+    var homeImg = textureLoader.load('static/backgroundimages/home.jpg')
 
-    <!-- 저장 모달 -->
-    <div class="modal" id="InfoSaveModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
+    scene.background = homeImg;
+    renderer.render(scene, camera);
+    document.body.appendChild(renderer.domElement);
 
-              <!-- 모달 헤더 -->
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" style="text-align: center;">특이사항</h4>
-              </div>
+    // 이미지 텍스처 로드
+    var textureLoader = new THREE.TextureLoader();
+    var textureList = [
+        'static/textures/container4.jpg',
+        'static/textures/container2.jpg',
+        'static/textures/container3.jpg',
+        'static/textures/container1.jpg'
+    ];
 
-              <!-- 모달 본문 -->
-              <div class="modal-body">
-                  <input type="text" id="title" name="title" placeholder="제목을 입력하세요." autocomplete="off"/><br><br>
-                  <textarea rows="4" cols="50" id="bigo" name="bigo" placeholder="내용을 입력하세요." autocomplete="off"></textarea>
-              </div>
+    // Geometry 생성
+    var geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5);
 
-              <!-- 모달 푸터 -->
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-success" id="btnModalSave">저장</button>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-              </div>
+    // Material 및 Mesh 생성
+    var cubes = [];
 
-            </div>
-        </div>
-    </div>
+    // 2x2 형태로 배열하기 위한 좌표 배열
+    var positions = [
+        { x: -2, y: 2 },
+        { x: 2, y: 2 },
+        { x: -2, y: -2 },
+        { x: 2, y: -2 }
+    ];
 
+    textureList.forEach(function (texturePath, index) {
+        var material = new THREE.MeshLambertMaterial({ map: textureLoader.load(texturePath) });
+        var cube = new THREE.Mesh(geometry, material);
 
-    <!-- 조회 모달 -->
-    <div class="modal" id="searchTitles">
-      <div class="modal-dialog">
-          <div class="modal-content">
+        // 초기 위치 설정
+        cube.position.set(positions[index].x, positions[index].y, 0);
 
-            <!-- 모달 헤더 -->
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title" style="text-align: center; font-weight: bold; font-size: 24px;">목록</h4>
-            </div>
-
-            <!-- 모달 본문 -->
-            <div class="modal-body">
-              <table>
-                <thead>
-                    <tr>
-                        <th>제목</th>
-                        <th>내용</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-                
-            </div>
-
-            <!-- 모달 푸터 -->
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-            </div>
-
-          </div>
-      </div>
-    </div>
-
-  
-    <h3 id="bigTitle" style="text-align: center; display: block;">3D 창고 시뮬레이션</h3>
-      <div>
-        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#userGuideModal" style="float: left;">사용설명서</button>
-        <button id="btnVessel" name="sceneList" value="vs" class="btn btn-light" style="float: right; margin-left: 5px;">선박</button>
-        <button id="btnWarehouse" name="sceneList" value="wh" class="btn btn-light" style="float: right;">창고</button>
-      </div>
-    
-      <br><br>
-        <span class="white-text">가로 :</span> <input type="text" id="width" name="width" style="text-align: right" placeholder="가로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        <span class="white-text">세로 :</span> <input type="text" id="height" name="height" style="text-align: right" placeholder="세로를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        <span class="white-text">높이 :</span> <input type="text" id="vertical" name="vertical" style="text-align: right" placeholder="높이를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        <span class="white-text">X축 :</span>&nbsp;  <input type="text" id="x_chuk" name="x_chuk" style="text-align: right" placeholder="X축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        <span class="white-text">Y축 :</span>&nbsp;  <input type="text" id="y_chuk" name="y_chuk" style="text-align: right" placeholder="y축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br>
-        <span class="white-text">Z축 :</span>&nbsp;  <input type="text" id="z_chuk" name="z_chuk" style="text-align: right" placeholder="z축 좌표를 입력하세요." autocomplete="off"/><span class="error-text"></span><br><br>
-        <button type="button" class="btn btn-success" id="btnTrans"> 적용 </button>
-        <button type="button" class="btn btn-warning" id="btnPrev"> 이전 </button>
-        <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
-        <button type="button" class="btn btn-primary" id="btnSave" data-toggle="modal" data-target="#InfoSaveModal">저장</button>
-        <button type="button" class="btn btn-light" id="btnSearch" data-toggle="modal" data-target="#searchTitles"> 조회 </button>
-        <button type="button" class="btn btn-black" id="btnDel"> 삭제 </button>
-      </div>
-  </div>
-    
-    <script src="public/bundle.js"></script>
-    <script src="src/index.js"></script>
-
-  </body>
-
-  <script>
-   
-    var scene;
-    var selectedContainer;
-
-    $(document).ready(function() {
-
-      $("#width").focus();
-      
-      $("button[name='sceneList']").click(function() {
-        scene = $(this).val();
-      });
-      
-      // 로컬 스토리지에서 값을 불러오기
-      selectedContainer = localStorage.getItem('selectedContainer');
-      
-      if (selectedContainer) {
-        console.log('불러온 값:' + selectedContainer);
-      } else {
-        console.log('불러온 값 X');
-      }
-      
-      defaultPage(selectedContainer);
-
-      // 업데이트시 title 변경 불가
-      $('#title').on('input', function() {
-        var dataToSend = window.dataSet();
-        if (dataToSend.save == 'update') {
-          $('#title').prop('readonly', true);
-        }
+        scene.add(cube);
+        cubes.push(cube);
     });
 
-  });
+    // Raycaster 생성
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2();
+
+    document.addEventListener('click', onDocumentClick, false);
+
+    const light = new THREE.PointLight(0xffffff, 1);
+    light.position.set(10, 10, 10);
+    scene.add(light);
+
+    // 카메라 위치 설정
+    camera.position.z = 5;
+
+    // 클릭 이벤트 핸들러
+    function onDocumentClick(event) {
+        event.preventDefault();
+
+        // 마우스 위치 계산
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+        // Raycaster로 객체 선택
+        raycaster.setFromCamera(mouse, camera);
+
+        var intersects = raycaster.intersectObjects(cubes);
+
+        if (intersects.length > 0) {
+            var selectedObject = intersects[0].object;
+
+            // 클릭한 cube 확대 애니메이션
+            var scaleUp = 10;
+            var animationDuration = 700; // 애니메이션 지속 시간 (밀리초)
         
+            var tween = new TWEEN.Tween(selectedObject.scale)
+                .to({ x: scaleUp, y: scaleUp, z: scaleUp }, animationDuration)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .onComplete(function () {
+                    // 애니메이션 완료 후 실행할 코드
+                    var objectIndex = cubes.indexOf(selectedObject);
+                    var selectedContainer = textureList[objectIndex];
 
-  // 유효성 검사
-  $('input[type="text"]').on('blur', inputValid);
+                    // 클릭한 cube의 src 값을 로컬 스토리지에 저장
+                    localStorage.setItem('selectedContainer', selectedContainer);
 
-  // 적용 버튼
-  $("#btnTrans").click(fnClickTrans);
+                    // 홈으로 이동
+                    window.location.href = '/threeContainer.html';
+                })
+                .start();
 
-  // 이전 버튼
-  $("#btnPrev").click(fnClickPrev);
-
-  // 초기화 버튼
-  $("#btnReset").click(fnClickReset);
-
-  // 저장 버튼
-  $("#btnSave").click(fnClickSave);
-
-  // 모달내부 저장 버튼 (실제 저장)
-  $("#btnModalSave").click(fnClickModalSave);
-
-  // 조회 버튼
-  $("#btnSearch").click(fnClickSearch);
-
-  // 삭제 버튼
-  $("#btnDel").click(fnClickDelete);
-  
-  // 창고 버튼
-  $("#btnWarehouse").click(fnChangeWarehouse);
-
-  // 선박 버튼
-  $("#btnVessel").click(fnChangeVessel);
-
-
-  function inputValid() {
-    const inputVal = $(this).val();
-    const errorText = $(this).next('.error-text');
-
-    // 정규식 (숫자 1 ~ 9)
-    var onlyNumber = /^[0-9]*$/;
+                // 화면 크기 조정
+                document.body.style.overflow = 'hidden'; // 스크롤바 숨기기
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
     
-    if(!onlyNumber.test(inputVal)){
-      errorText.text(' 양의 정수를 입력하세요.');
-    }else{
-      errorText.text('');
-    }
-  }
-
-  function fnClickTrans(val, src) {
-    
-    if(val.length != undefined){
-      setTransData(val, 'DB', src);
-    }else{
-      var width = $("#width").val();
-      var height = $("#height").val();
-      var vertical = $("#vertical").val();
-      var x_chuk = $("#x_chuk").val();
-      var y_chuk = $("#y_chuk").val();
-      var z_chuk = $("#z_chuk").val();
-
-      var valList = [ width, height, vertical, x_chuk, y_chuk, z_chuk ];
-
-      setTransData(valList, '', src);
-    }
-  }
-  
-  function fnClickPrev(){
-    setPrevData();
-  }
-
-
-  function fnClickReset(){
-    setResetData();
-  }
-
-
-  function fnClickSave(){
-    var obj = $(".btn.btn-success:not(#btnModalSave)").val(); // 클래스가 btn.btn-success 인 애들 중에서 아이디는 btnModalSave 얘가 아닌 애들 ( = 창고, 선박)
-    if(obj == ''){ // 첫화면일때
-      alert("창고, 선박 둘 중 선택하고 저장하세요.");
-      return false;
-    }
-  }
-
-
-  function fnClickModalSave(){
-
-    // const dataToSend = {
-    //   title: $("#title").val(),
-    //   bigo: $("#bigo").val(),
-    //   width: $("#width").val(),
-    //   height: $("#height").val(),
-    //   vertical: $("#vertical").val(),
-    //   x_chuk: $("#x_chuk").val(),
-    //   y_chuk: $("#y_chuk").val(),
-    //   z_chuk: $("#z_chuk").val(),
-    //   scene: scene
-    // };
-
-    // const fieldIds = ["title", "width", "height", "vertical", "x_chuk", "y_chuk", "z_chuk"]; // bigo 는 null 허용
-    // var dataSet = dataSet();
-    var dataToSend = window.dataSet();
-    if (!dataToSend.save) {
-        dataToSend.save = 'insert'
-    }
-    dataToSend.forEach(function(item) {
-      // 각 객체에 title과 bigo 필드 추가
-      item.title = $("#title").val(); 
-      item.bigo = $("#bigo").val();
-      item.scene = scene;
-      item.save = dataToSend.save;
-    });
-    console.log("dataSet : " + JSON.stringify(dataToSend))
-    
-    if (!dataToSend || dataToSend.length === 0) {
-      alert("내용을 제외한 모든 필드를 작성해야 합니다.");
-      return false;
-    }
-
-    for (var i = 0; i < dataToSend.length; i++) {
-      var item = dataToSend[i];
-      if (!item.title || !item.x_chuk || !item.y_chuk || !item.z_chuk || !item.width || !item.height || !item.vertical || !item.scene) {
-        alert("내용을 제외한 모든 필드를 작성해야 합니다.");
-        return false;
-      }
-    }
-
-    $.ajax({
-      type: "POST",
-      url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
-      // data: JSON.stringify(dataToSend),
-      data: JSON.stringify(dataToSend),
-      contentType: 'application/json',
-      success: function(data) {
-        $("#InfoSaveModal").modal("hide");
-      }
-    }); 
-
-      $("input").val(null); // 모든 input 값 초기화
-  }
-
-
-  function fnClickSearch(){
-
-     $.get('http://localhost:7000/api/getTitles', function(data) {
-      
-      var clickedTitle;
-      var tableBody = document.querySelector("#searchTitles table tbody");
-          tableBody.innerHTML = '';
-
-      for (let i = 0; i < data.length; i++) {
-          var row = tableBody.insertRow(i);
-          var titleCell = row.insertCell(0); // 첫번째 컬럼
-          var contentCell = row.insertCell(1); // 두번쨰 컬럼
-
-          titleCell.textContent = data[i].TITLE;
-          contentCell.textContent = data[i].BIGO;
-          titleCell.style.cursor = 'pointer';
-          titleCell.style.color = 'blue';
-
-          titleCell.addEventListener('click', function () {
-            
-            var clickedTitle = data[i].TITLE;
-            fnSetDatas(clickedTitle, selectedContainer);
-          });
-
         }
+    }
+
+    function resizeImg() {
         
-    });
+        // 뷰포트의 크기 변경에 따라 배경 이미지 크기 조절
+        var aspect = window.innerWidth / window.innerHeight;
+        camera.aspect = aspect;
+        camera.updateProjectionMatrix();
 
-  }
-
-  function fnClickDelete(){
-
-    var dataToSend = window.dataSet();
-    
-    if (!dataToSend.save) {
-      alert("삭제할 데이터를 찾을 수 없습니다.");    
-    }else if(dataToSend.save = 'update'){
-
-        var isConfirmed = confirm("삭제하시겠습니까?");
-        if (isConfirmed) {
-
-          dataToSend.save = 'delete'
-          dataToSend.forEach(function(item) {
-            item.save = dataToSend.save;
-          });
-
-          $.ajax({
-            type: "POST",
-            url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
-            // data: JSON.stringify(dataToSend),
-            data: JSON.stringify(dataToSend),
-            contentType: 'application/json',
-            success: function(data) {
-              $("#InfoSaveModal").modal("hide");
-            }
-          });
-        } else {
-            // 취소를 누른 경우
-            // 아무 동작도 수행하지 않음
-        }
-    }else{
-      alert("저장된 데이터가 아닙니다.");    
+        // Three.js 렌더러 크기 업데이트
+        renderer.setSize(window.innerWidth, window.innerHeight);
     }
-  }
 
-  function fnChangeWarehouse(){
-    
-    if($("#btnVessel").hasClass("btn btn-success")){
-      $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
-    }
-    $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success")
+    window.addEventListener('resize', resizeImg);
 
-    init("warehouse", selectedContainer)
+    // 애니메이션 루프
+    const animate = () => {
+        requestAnimationFrame(animate);
 
-    changeCSS()
-  }
+        cubes.forEach(function (cube) {
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+        });
 
+        TWEEN.update();
 
-  function fnChangeVessel(){
-    if($("#btnWarehouse").hasClass("btn btn-success")){
-      $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light")
-    }
-    $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
+        renderer.render(scene, camera);
+    };
 
-    init("vessel", selectedContainer)
-
-    changeCSS()
-  }
-
-
- function changeCSS(){
-
-  $("#bigTitle").css('color', 'white');
-  $(".white-text").css("color", "white");
-
-}
-
-
-function fnSetDatas(val, src){
-    
-  $.ajax({
-    type: "POST",
-    url: "http://localhost:7000/api/getDatas",
-    data: JSON.stringify(val),
-    contentType: 'application/json',
-    success: function(data) {
-      $('#searchTitles').modal('hide');
-      fnClickTrans(data, src)
-    }
-  }); 
-
-}
-
+    animate();
 </script>
+   
 
 </html>
