@@ -160,6 +160,7 @@
         <button type="button" class="btn btn-danger" id="btnReset"> 초기화 </button>
         <button type="button" class="btn btn-primary" id="btnSave" data-toggle="modal" data-target="#InfoSaveModal">저장</button>
         <button type="button" class="btn btn-light" id="btnSearch" data-toggle="modal" data-target="#searchTitles"> 조회 </button>
+        <button type="button" class="btn btn-black" id="btnDel"> 삭제 </button>
       </div>
   </div>
     
@@ -192,6 +193,14 @@
       
       defaultPage(selectedContainer);
 
+      // 업데이트시 title 변경 불가
+      $('#title').on('input', function() {
+        var dataToSend = window.dataSet();
+        if (dataToSend.save == 'update') {
+          $('#title').prop('readonly', true);
+        }
+    });
+
   });
         
 
@@ -215,6 +224,9 @@
 
   // 조회 버튼
   $("#btnSearch").click(fnClickSearch);
+
+  // 삭제 버튼
+  $("#btnDel").click(fnClickDelete);
   
   // 창고 버튼
   $("#btnWarehouse").click(fnChangeWarehouse);
@@ -291,12 +303,15 @@
     // const fieldIds = ["title", "width", "height", "vertical", "x_chuk", "y_chuk", "z_chuk"]; // bigo 는 null 허용
     // var dataSet = dataSet();
     var dataToSend = window.dataSet();
+    if (!dataToSend.save) {
+        dataToSend.save = 'insert'
+    }
     dataToSend.forEach(function(item) {
-    // 각 객체에 title과 bigo 필드 추가
-    item.title = $("#title").val(); 
-    item.bigo = $("#bigo").val();
-    item.scene = scene;
-
+      // 각 객체에 title과 bigo 필드 추가
+      item.title = $("#title").val(); 
+      item.bigo = $("#bigo").val();
+      item.scene = scene;
+      item.save = dataToSend.save;
     });
     console.log("dataSet : " + JSON.stringify(dataToSend))
     
@@ -358,6 +373,40 @@
 
   }
 
+  function fnClickDelete(){
+
+    var dataToSend = window.dataSet();
+    
+    if (!dataToSend.save) {
+      alert("삭제할 데이터를 찾을 수 없습니다.");    
+    }else if(dataToSend.save = 'update'){
+
+        var isConfirmed = confirm("삭제하시겠습니까?");
+        if (isConfirmed) {
+
+          dataToSend.save = 'delete'
+          dataToSend.forEach(function(item) {
+            item.save = dataToSend.save;
+          });
+
+          $.ajax({
+            type: "POST",
+            url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
+            // data: JSON.stringify(dataToSend),
+            data: JSON.stringify(dataToSend),
+            contentType: 'application/json',
+            success: function(data) {
+              $("#InfoSaveModal").modal("hide");
+            }
+          });
+        } else {
+            // 취소를 누른 경우
+            // 아무 동작도 수행하지 않음
+        }
+    }else{
+      alert("저장된 데이터가 아닙니다.");    
+    }
+  }
 
   function fnChangeWarehouse(){
     

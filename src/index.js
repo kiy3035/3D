@@ -220,7 +220,22 @@ window.setTransData = function(value, type, src) {
     }else if(value[0].SCENE == "vs"){
       init("vessel", src)
     }
-
+    // 조회에서 가져온 데이터로 셋팅
+    shapeData = value;
+    shapeData.save = "update";
+    // 기존과 같이 전부 소문자로 변경
+    for (let i = 0; i < shapeData.length; i++) {
+      const data = shapeData[i];
+      const newData = {};
+  
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          // 모든 속성 이름을 소문자로 변경
+          newData[key.toLowerCase()] = data[key];
+        }
+      }
+      shapeData[i] = newData;
+    }
     for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
       delete value[i].SCENE;
       delete value[i].TITLE;
