@@ -4,13 +4,14 @@ import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 if (WEBGL.isWebGLAvailable()) {
-  var camera, scene, renderer, controls
-  var plane
-  var mouse, raycaster, isShiftDown = false
+  var camera, scene, renderer, controls;
+  var plane;
+  var mouse, raycaster, isShiftDown = false;
 
-  var rollOverMesh, rollOverMaterial
-  var cubeGeo, cubeMaterial
-  var objects = []
+  var rollOverMesh, rollOverMaterial;
+  var cubeGeo, cubeMaterial;
+  var objects = [];
+  var shapeData = []; // 컨테이너 정보를 저장할 배열
 
   // init()
   // render()
@@ -169,7 +170,16 @@ if (WEBGL.isWebGLAvailable()) {
         objects.push(voxel)
         cubeUUIDList.push(voxel.uuid);
         console.log(cubeUUIDList)
-       
+
+        
+        // voxel.scale : 컨테이너 크기 x = 가로, y = 세로, z = 높이
+        console.log("컨테이너 크기 : " + JSON.stringify(voxel.scale))
+        // voxcel.position : 컨테이너 위치 x , y , z 
+        console.log("컨테이너 위치 : " + JSON.stringify(voxel.position))
+        
+        // 컨테이너를 배치할 때마다 정보를 추가
+        addShapeToData(voxel);
+        //console.log("shapeData : " + JSON.stringify(shapeData))
       }
 
       render()
@@ -393,5 +403,27 @@ function onRightClick(event) {
     
   }
 
+}
+// 컨테이너를 배치할 때마다 정보를 추가
+function addShapeToData(voxel) {
+  var data = {
+    // position: {
+      // voxcel.position : 컨테이너 위치 x , y , z 
+      x_chuk: voxel.position.x,
+      y_chuk: voxel.position.y,
+      z_chuk: voxel.position.z,
+    // },
+    // scale: {
+      // voxel.scale : 컨테이너 크기 x = 가로, y = 세로, z = 높이
+      width: voxel.scale.x,
+      height: voxel.scale.y,
+      vertical: voxel.scale.z
+    // }
+  };
+  shapeData.push(data);
+}
+window.dataSet = function(){
+  console.log("shapeData : " + JSON.stringify(shapeData))
+  return shapeData; // shapeData를 리턴하는 함수
 }
 
