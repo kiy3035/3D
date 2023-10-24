@@ -285,16 +285,18 @@
     // 각 객체에 title과 bigo 필드 추가
     item.title = $("#title").val(); 
     item.bigo = $("#bigo").val();
+    item.scene = scene;
+
     });
-    //console.log("dataSet : " + JSON.stringify(shapeData))
-    // debugger;
-    // for (const fieldId of fieldIds) {
-    //   const value = $("#" + fieldId).val();
-    //   if (!value) {
-    //     alert("내용을 제외한 모든 필드를 작성해야 합니다.");
-    //     return false;
-    //   }
-    // }
+    console.log("dataSet : " + JSON.stringify(dataToSend))
+    
+    for (const fieldId of fieldIds) {
+      const value = $("#" + fieldId).val();
+      if (!value) {
+        alert("내용을 제외한 모든 필드를 작성해야 합니다.");
+        return false;
+      }
+    }
 
     $.ajax({
       type: "POST",
