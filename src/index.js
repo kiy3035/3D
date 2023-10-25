@@ -229,6 +229,7 @@ window.setTransData = function(value, type, src) {
     for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
       delete value[i].SCENE;
       delete value[i].TITLE;
+      delete value[i].BIGO;
     }
 
     console.log(value)
@@ -261,7 +262,6 @@ window.setTransData = function(value, type, src) {
       }
       shapeData[i] = newData;
     }
-    debugger;
     
   }else{ // 그냥 적용버튼으로 하나씩 도형 만들 때
 
