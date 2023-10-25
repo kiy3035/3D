@@ -197,14 +197,6 @@
       
       defaultPage(selectedContainer);
 
-      // 업데이트시 title 변경 불가
-      $('#title').on('input', function() {
-        var dataToSend = window.dataSet();
-        if (dataToSend.save == 'update') {
-          $('#title').prop('readonly', true);
-        }
-      });
-
     });
         
 
@@ -287,6 +279,16 @@
       alert("창고, 선박 둘 중 선택하고 저장하세요.");
       return false;
     }
+    
+    // 업데이트시 title 변경 불가
+    var dataToSend = window.dataSet();
+    if (dataToSend.save == 'update') {
+      $('#title').prop('readonly', true);
+      $('#title').val(dataToSend[0].title); // 조회해온 값으로 셋팅
+      $('#bigo').val(dataToSend[0].bigo);
+    }else{
+      $('#title').prop('readonly', false);
+    }
   }
 
 
@@ -340,6 +342,7 @@
       contentType: 'application/json',
       success: function(data) {
         $("#InfoSaveModal").modal("hide");
+        alert("저장 하였습니다.");
       }
     }); 
 
