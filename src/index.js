@@ -353,7 +353,7 @@ function convertScene(val) {
   if (val == "warehouse") {
     backImg = textureLoader.load('static/backgroundimages/warehouse.jpg')
   } else if (val == "vessel") {
-    backImg = textureLoader.load('static/backgroundimages/vessel.png')
+    backImg = textureLoader.load('static/backgroundimages/vessel.jpg')
   }
 
   scene.background = backImg;
