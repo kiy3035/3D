@@ -92,6 +92,11 @@
         raycaster.setFromCamera(mouse, camera);
 
         var intersects = raycaster.intersectObjects(cubes);
+        var intersectUni = raycaster.intersectObject(universeMesh);
+
+        if (intersectUni.length > 0) {
+            clickUniverse();
+        }
 
         if (intersects.length > 0) {
             var selectedObject = intersects[0].object;
@@ -111,7 +116,7 @@
                     // 클릭한 cube의 src 값을 로컬 스토리지에 저장
                     localStorage.setItem('selectedContainer', selectedContainer);
 
-                    // 홈으로 이동
+                    // 화면 이동
                     window.location.href = '/threeContainer.html';
                 })
                 .start();
@@ -120,6 +125,7 @@
                 document.body.style.overflow = 'hidden'; // 스크롤바 숨기기
                 document.body.style.width = '100%';
                 document.body.style.height = '100%';
+
     
         }
     }
@@ -137,6 +143,40 @@
 
     window.addEventListener('resize', resizeImg);
 
+    
+    // 오른쪽 구석탱이에 우주
+    var universeTexture = new THREE.TextureLoader().load('static/textures/universe.jpg');
+
+    var universeMaterial = new THREE.MeshBasicMaterial({ map: universeTexture });
+    var universeGeometry = new THREE.CircleGeometry(1, 32);
+    var universeMesh = new THREE.Mesh(universeGeometry, universeMaterial);
+
+    universeMesh.position.set(6, 3, 0);
+
+    scene.add(universeMesh);
+
+    function updateUniversePosition() {
+    // 뷰포트의 크기 변경에 따라 위치 조정
+    var aspect = window.innerWidth / window.innerHeight;
+    var xPosition = 3.2; // 초기 x 위치
+    var yPosition = 3; // 초기 y 위치
+
+    if (aspect < 1) {
+        // 화면 가로가 세로보다 길 때, x 위치를 초기화하고 y 위치는 화면 세로에 맞게 조정
+        xPosition = 3.2;
+        yPosition = 3 / aspect;
+    } else {
+        // 화면 세로가 가로보다 길 때, y 위치를 초기화하고 x 위치는 화면 가로에 맞게 조정
+        xPosition = 3.2 * aspect;
+        yPosition = 3;
+    }
+
+    universeMesh.position.set(xPosition, yPosition, 0);
+}
+
+    window.addEventListener('resize', updateUniversePosition);
+
+
     // 애니메이션 루프
     const animate = () => {
         requestAnimationFrame(animate);
@@ -152,6 +192,11 @@
     };
 
     animate();
+
+    function clickUniverse(){
+        window.location.href = '/universe.html';
+    }
+
 </script>
    
 
