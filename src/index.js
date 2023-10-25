@@ -220,6 +220,11 @@ window.setTransData = function(value, type, src) {
     }else if(value[0].SCENE == "vs"){
       init("vessel", src)
     }
+    // 조회에서 가져온 데이터로 셋팅
+    const _ = require('lodash'); // lodash 라이브러리를 불러옴
+
+    shapeData = _.cloneDeep(value); // 깊은 복사
+    shapeData.save = "update";
     
     for (var i = 0; i < value.length; i++) { // Type이 String인 애들 삭제
       delete value[i].SCENE;
@@ -243,10 +248,6 @@ window.setTransData = function(value, type, src) {
       cubeUUIDList.push(cube.uuid);
     }
 
-    // 조회에서 가져온 데이터로 셋팅
-    shapeData = value;
-    shapeData.save = "update";
-    
     // 기존과 같이 전부 소문자로 변경
     for (let i = 0; i < shapeData.length; i++) {
       const data = shapeData[i];
@@ -260,6 +261,7 @@ window.setTransData = function(value, type, src) {
       }
       shapeData[i] = newData;
     }
+    debugger;
     
   }else{ // 그냥 적용버튼으로 하나씩 도형 만들 때
 
