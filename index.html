@@ -95,7 +95,7 @@
         var intersectUni = raycaster.intersectObject(universeMesh);
 
         if (intersectUni.length > 0) {
-            clickUniverse();
+            clickUniverse(intersectUni);
         }
 
         if (intersects.length > 0) {
@@ -126,7 +126,6 @@
                 document.body.style.width = '100%';
                 document.body.style.height = '100%';
 
-    
         }
     }
 
@@ -152,8 +151,12 @@
     var universeMesh = new THREE.Mesh(universeGeometry, universeMaterial);
 
     universeMesh.position.set(6, 3, 0);
-
     scene.add(universeMesh);
+
+    
+
+
+
 
     function updateUniversePosition() {
     // 뷰포트의 크기 변경에 따라 위치 조정
@@ -172,7 +175,7 @@
     }
 
     universeMesh.position.set(xPosition, yPosition, 0);
-}
+    }
 
     window.addEventListener('resize', updateUniversePosition);
 
@@ -193,8 +196,32 @@
 
     animate();
 
-    function clickUniverse(){
-        window.location.href = '/universe.html';
+    function clickUniverse(intersectUni) {
+        var selectedUni = intersectUni[0].object;
+
+        // 클릭한 cube 확대 애니메이션
+        var scaleUp = 10;
+        var animationDuration = 700; // 애니메이션 지속 시간 (밀리초)
+        
+        var tween = new TWEEN.Tween(selectedUni.scale)
+            .to({ x: scaleUp, y: scaleUp, z: scaleUp }, animationDuration)
+            .easing(TWEEN.Easing.Quadratic.InOut)
+            .onComplete(function () {
+                // 애니메이션 완료 후 실행할 코드
+                var objectIndex = cubes.indexOf(selectedUni);
+                var selectedContainer = textureList[objectIndex];
+
+                // 클릭한 cube의 src 값을 로컬 스토리지에 저장
+                localStorage.setItem('selectedContainer', selectedContainer);
+
+                // 화면 이동
+                window.location.href = '/universe.html';
+            })
+            .start();
+
+            // 화면 크기 조정
+            document.body.style.overflow = 'hidden'; // 스크롤바 숨기기
+
     }
 
 </script>

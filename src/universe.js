@@ -1,7 +1,7 @@
 import * as THREE from '../node_modules/three/build/three.module.js';
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
 // import { WEBGL } from './webgl'
 // import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 const scene = new THREE.Scene();
 
@@ -47,6 +47,7 @@ const earthTexture = new THREE.TextureLoader().load('static/backgroundimages/ear
 const earthGeometry = new THREE.SphereGeometry(0.7, 32, 32);
 const earthMaterial = new THREE.MeshBasicMaterial({
     map: earthTexture,
+    side: THREE.DoubleSide
 });
 
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
@@ -105,6 +106,29 @@ particlesGeometry.setAttribute(
 const particlesMesh = new THREE.Points(particlesGeometry, particlesmaterial);
 scene.add(particlesMesh);
 
+
+// 클릭 이벤트 처리 함수
+function onStarClick(event) {
+    const x = (event.clientX / window.innerWidth) * 2 - 1;
+    const y = -(event.clientY / window.innerHeight) * 2 + 1;
+  
+    // 마우스 클릭 위치로부터 Raycaster 생성
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+  
+    // 별들에 Raycaster를 적용하여 교차(intersect)하는 별을 찾음
+    const intersects = raycaster.intersectObject(particlesMesh);
+  
+    if (intersects.length > 0) {
+      const intersectedStar = intersects[0];
+      console.log('클릭한 별의 위치:', intersectedStar.point);
+    }
+  }
+  
+// 클릭 이벤트 리스너 추가
+document.addEventListener('click', onStarClick);
+
+  
 // 마우스 이동
 document.addEventListener("mousemove", animateParticles);
 
@@ -116,6 +140,16 @@ function animateParticles(event) {
   mouseX = event.clientX;
 }
 
+// orbitControls
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.minDistance = 1;
+controls.maxDistance = 10; // 적절한 최대 거리 설정
+
+// 마우스 드래그로 뷰 회전을 활성화
+controls.enableDamping = true; // 부드러운 카메라 이동 활성화
+controls.dampingFactor = 0.05;
+
+
 // animate
 const clock = new THREE.Clock(); // 프레임 간 경과된 시간 추적
 
@@ -124,7 +158,9 @@ const animate = () => {
 
   const elapsedTime = clock.getElapsedTime(); // 초 단위로 경과된 시간 나타냄
 
-  // Update objects
+  // 회전 속도 설정
+  const rotationSpeed = 0.01; // 원하는 회전 속도로 조절
+
   earth.rotation.y = 0.5 * elapsedTime; // 지구 회전
   mars.rotation.z = 0.5 * elapsedTime; // 화성 회전
 
@@ -135,6 +171,8 @@ const animate = () => {
     particlesMesh.rotation.x = -mouseY * (elapsedTime * 0.00008);
     particlesMesh.rotation.y = -mouseX * (elapsedTime * 0.00008);
   }
+
+  controls.update();
 
   renderer.render(scene, camera);
 };
