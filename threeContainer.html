@@ -67,6 +67,18 @@
           transform: perspective(1200px) rotateY(360deg);
         }
       }
+      .loader-container {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+}
+
+.loader {
+    width: 0;
+    height: 20px;
+    background-color: #0074d9;
+    transition: width 1s;
+}
     </style>
 
   </head>
@@ -169,7 +181,7 @@
       </div>
     </div>
 
-    <div id="idTopMan" class="classTopMan">
+    <div id="idTopMan" class="classTopMan"><br><br>
       <h1 class="classBigTitle" id="idBigTitle">3D 창고 시뮬레이션</h1>
       <br><br>
       <button class="btn btn-info" data-toggle="modal" data-target="#userGuideModal" style="width: 150px; height: 60px; font-size: 18px;" >사용설명서</button>
@@ -198,6 +210,9 @@
     
     <script src="public/bundle.js"></script>
     <script src="src/index.js"></script>
+    <div class="loader-container">
+      <div class="loader"></div>
+  </div>
 
   </body>
 
@@ -206,6 +221,7 @@
     var scene;
     var selectedContainer;
 
+    
     $(document).ready(function() {
 
       // 시작 시 숨김
@@ -226,6 +242,10 @@
       }
       
       defaultPage(selectedContainer);
+
+      var iframe = document.getElementById("myIframe");
+      iframe.contentWindow.postMessage("iframeVS", "*");
+      
 
     });
         
@@ -435,7 +455,6 @@
           $.ajax({
             type: "POST",
             url: "http://localhost:7000/api/data", // 백엔드 컨트롤러 URL
-            // data: JSON.stringify(dataToSend),
             data: JSON.stringify(dataToSend),
             contentType: 'application/json',
             success: function(data) {
@@ -460,16 +479,17 @@
       return false;
     }
 
-    afterSearch();
+    const loader = document.querySelector('.loader');
+    loader.style.width = '100%';
 
-    $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
-    $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success")
-
-    if(backImg != "wh"){
+    setTimeout(function() {
       init("warehouse", selectedContainer);
-    }
-
-    changeCSS()
+      $(".loader-container").hide();
+      afterSearch();
+      $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light");
+      $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success");
+      changeCSS();
+    }, 1000); // 1000ms = 1s
   }
 
 
@@ -480,17 +500,22 @@
       return false;
     }
 
-    afterSearch();
+    const loader = document.querySelector('.loader');
+    loader.style.width = '100%';
+    
+    setTimeout(function() {
+      init("vessel", selectedContainer);
+      $(".loader-container").hide();
+      afterSearch();
+      $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light");
+      $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success");
+      changeCSS();
+    }, 1000); // 1000ms = 1s
+   
 
-    $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light")
-    $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
+}
 
-    if(backImg != "vs"){
-      init("vessel", selectedContainer)
-    }
 
-    changeCSS();
-  }
 
 
  function changeCSS(){
