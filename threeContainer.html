@@ -20,23 +20,23 @@
     <style>
       /* 에러 메세지 */
       .error-text {
-          color: red;
+        color: red;
       }
       /* 테이블 스타일 */
       table {
-            border-collapse: collapse;
-            width: 100%;
-            margin: 0 auto;
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0 auto;
       }
       /* 테이블 셀 스타일 */
       th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
       }
       /* 짝수 행 배경색 설정 */
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
       }
       .classTopMan {
         text-align: center;
@@ -54,6 +54,18 @@
         /* 배경색 설정 */
         padding: 10px; /* 텍스트 주위 여백 추가 */
         border-radius: 5px; /* 테두리 모양 변경 */
+      }
+      #idBigTitle {
+        transform: perspective(1200px) rotateY(0deg);
+        animation: rotate 5s linear infinite;
+      }
+      @keyframes rotate {
+        0% {
+          transform: perspective(1200px) rotateY(0deg);
+        }
+        100% {
+          transform: perspective(1200px) rotateY(360deg);
+        }
       }
     </style>
 
