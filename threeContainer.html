@@ -275,10 +275,16 @@
     }
   }
 
-  function fnClickTrans(val, src) {
-    
+  function fnClickTrans(val, src, backImg) {
+
     if(val.length != undefined){
       setTransData(val, 'DB', src);
+
+      if(backImg == "wh"){
+        fnSelectWarehouse(backImg);
+      }else if(backImg == "vs"){
+        fnSelectVessel(backImg);
+      }
     }else{
       var width = $("#width").val();
       var height = $("#height").val();
@@ -302,7 +308,7 @@
     setResetData();
   }
 
-
+  // 첫화면에서 저장버튼 숨겨서 이제 안쓰이는 함수
   function fnClickSave(){
     var obj = $(".btn.btn-success:not(#btnModalSave)").val(); // 클래스가 btn.btn-success 인 애들 중에서 아이디는 btnModalSave 얘가 아닌 애들 ( = 창고, 선박)
     if(obj == ''){ // 첫화면일때
@@ -447,27 +453,41 @@
     }
   }
 
-  function fnSelectWarehouse(){
+  function fnSelectWarehouse(backImg){
+
+    // 클릭되어있는 상태에서 계속 클릭 방지
+    if($("#btnWarehouse").attr("class") == "btn btn-success"){
+      return false;
+    }
 
     afterSearch();
 
     $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light")
     $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success")
 
-    init("warehouse", selectedContainer)
+    if(backImg != "wh"){
+      init("warehouse", selectedContainer);
+    }
 
     changeCSS()
   }
 
 
-  function fnSelectVessel(){
+  function fnSelectVessel(backImg){
+
+    // 클릭되어있는 상태에서 계속 클릭 방지
+    if($("#btnVessel").attr("class") == "btn btn-success"){
+      return false;
+    }
 
     afterSearch();
 
     $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light")
     $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success")
 
-    init("vessel", selectedContainer)
+    if(backImg != "vs"){
+      init("vessel", selectedContainer)
+    }
 
     changeCSS();
   }
@@ -505,7 +525,9 @@ function fnSetDatas(val, src){
     contentType: 'application/json',
     success: function(data) {
       $('#searchTitles').modal('hide');
-      fnClickTrans(data, src);
+      var backImg = data[0].SCENE;
+      fnClickTrans(data, src, backImg);
+
       // 삭제 버튼 보이게
       $("#btnDel").show();
     }
