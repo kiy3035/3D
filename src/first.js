@@ -73,9 +73,9 @@ scene.background = cubeMapTexture;
 
 // 벽에 액자 이미지 로드
 const frameTexture1 = new THREE.TextureLoader().load('static/first/homeFrame.png'); // left
-const frameTexture2 = new THREE.TextureLoader().load('static/backgroundimages/mars.jpg'); // back
-const frameTexture3 = new THREE.TextureLoader().load('static/backgroundimages/earth.jpg'); // front
-const frameTexture4 = new THREE.TextureLoader().load('static/first/side.jpg'); // right
+const frameTexture2 = new THREE.TextureLoader().load('static/first/example.jpg'); // back
+const frameTexture3 = new THREE.TextureLoader().load('static/first/example2.jpg'); // front
+const frameTexture4 = new THREE.TextureLoader().load('static/first/game.jpg'); // right
 const frameTexture5 = new THREE.TextureLoader().load('static/first/stars.jpg'); // top
 
 const material1 = new THREE.MeshBasicMaterial({ map: frameTexture1 }); // front
@@ -124,8 +124,9 @@ function onDocumentClick(event) {
   // Raycaster로 객체 선택
   raycaster.setFromCamera(mouse, camera);
 
-  var intersectUni = raycaster.intersectObject(wall5);
-  var intersectHome = raycaster.intersectObject(wall1);
+  var intersectUni = raycaster.intersectObject(wall5); // top
+  var intersectHome = raycaster.intersectObject(wall1); // front
+  var intersectGame = raycaster.intersectObject(wall4); // right
 
   // 우주 클릭
   if (intersectUni.length > 0) {
@@ -135,6 +136,11 @@ function onDocumentClick(event) {
   // 홈액자 클릭
   if (intersectHome.length > 0) {
     clickHome();
+  }
+
+  // 게임액자 클릭
+  if (intersectGame.length > 0) {
+    clickGame();
   }
 
 }
@@ -213,6 +219,16 @@ function coverScreenWithOverlay() {
 function clickHome() {
   window.location.href = '/';
 }
+
+
+/*
+  게임액자 클릭시 이동
+*/
+
+function clickGame() {
+  window.location.href = '/game.html';
+}
+
 
 // 애니메이션
 const animate = () => {
