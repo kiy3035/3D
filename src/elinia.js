@@ -1,100 +1,52 @@
-import * as THREE from '../node_modules/three/src/three.js';
+// import * as THREE from '../node_modules/three/src/three.js';
+import * as THREE from '../node_modules/three/build/three.module.js';
+import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+// import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 
-const sizes = {
-  width: window.innerWidth,
-  height: window.innerHeight,
-};
+camera.position.set(0, 0, 150);
 
-const camera = new THREE.PerspectiveCamera(
-  80,
-  sizes.width / sizes.height,
-  0.5,
-  100
-);
+scene.background = new THREE.Color('white');
 
-camera.position.z = 1;
+const light = new THREE.DirectionalLight(0xffffff, 10);
+scene.add(light);
 
-scene.add(camera);
-
-const renderer = new THREE.WebGLRenderer({
-  antialias: false,
-});
-
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-document.body.appendChild(renderer.domElement);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(window.innerWidth, window.innerHeight);
+canvas.appendChild(renderer.domElement);
 
 window.addEventListener('resize', () => {
-  sizes.width = window.innerWidth;
-  sizes.height = window.innerHeight;
+  const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
   camera.aspect = sizes.width / sizes.height;
   camera.updateProjectionMatrix();
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
-// 큐브 맵 이미지 로드
-const cubeMapTexture = new THREE.CubeTextureLoader()
-  .setPath('static/textures/cubemap/') // 큐브 맵 이미지 파일이 저장된 폴더 경로
-  .load([
-    'elinia1.jpg', 'elinia1.jpg',
-    'elinia1.jpg', 'elinia1.jpg',
-    'elinia1.jpg', 'elinia1.jpg'
-  ]);
+const loader = new GLTFLoader();
+const modelPath = 'static/textures/ramenShop.gltf';
 
-scene.background = cubeMapTexture;
-// 마우스 드래그 상태를 저장할 변수
-let isDragging = false;
-
-// 마우스의 이전 위치를 저장할 변수
-let prevX = 0;
-let prevY = 0;
-
-// 마우스 클릭 이벤트 리스너
-document.addEventListener("mousedown", (event) => {
-  if (event.button === 0) {
-    isDragging = true;
-    prevX = event.clientX;
-    prevY = event.clientY;
-  }
+loader.load(modelPath, (gltf) => {
+  const model = gltf.scene;
+  scene.add(model);
+}, undefined, (error) => {
+  console.error('GLTF 모델 로딩 중 오류 발생:', error);
 });
+camera.position.set(0, 8, 0); // 카메라의 초기 위치를 (0, 10, 0)으로 설정 (x, y, z 좌표)
+camera.lookAt(0, 0, 0); // 카메라가 (0, 0, 0)을 향하도록 설정
 
-// 마우스 이동 이벤트 리스너
-document.addEventListener("mousemove", (event) => {
-  if (isDragging) {
-    const deltaX = event.clientX - prevX;
-    const deltaY = event.clientY - prevY;
-    
-    // 마우스 이동에 따라 카메라 회전
-    camera.rotation.y += deltaX * 0.01;
-    camera.rotation.x += deltaY * 0.01;
-    
-    prevX = event.clientX;
-    prevY = event.clientY;
-  }
-});
+// 이미지 텍스처 로드
+const textureLoader2 = new THREE.TextureLoader();
+const floorTexture = textureLoader2.load('static/first/soil.jpg');
 
-// 마우스 릴리스 이벤트 리스너
-document.addEventListener("mouseup", (event) => {
-  if (event.button === 0) {
-    isDragging = false;
-  }
-});
-let isCtrlPressed = false;
-
-
-// Ctrl 키 뗌 이벤트 리스너
-document.addEventListener("keyup", (event) => {
-  if (event.key === "Control") {
-    isCtrlPressed = false;
-  }
-});
-
-
-
-// animate 함수 (이미 추가되어 있음)
 const animate = () => {
   window.requestAnimationFrame(animate);
   renderer.render(scene, camera);
