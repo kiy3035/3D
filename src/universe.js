@@ -52,6 +52,7 @@ const earthMaterial = new THREE.MeshBasicMaterial({
 
 const earth = new THREE.Mesh(earthGeometry, earthMaterial);
 scene.add(earth);
+camera.rotation.set(45, 30, 0);
 
 // 화성 모양
 const marsTexture = new THREE.TextureLoader().load('static/backgroundimages/mars.jpg');
