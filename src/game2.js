@@ -12,34 +12,74 @@ import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoade
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
 const renderer = new THREE.WebGLRenderer();
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
 
 // 클릭 이벤트를 감지할 DOM 요소를 선택합니다.
 const domElement = renderer.domElement;
 
+
+
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
-
-
-/*
-    파노라마 배경
-*/
-
-const textureLoader = new THREE.TextureLoader();
-const panoramaTexture = textureLoader.load('static/game2/web2gether.jpg'); // 패노라마 이미지 경로
-
-const geometry = new THREE.SphereGeometry(500, 60, 40);
-const material = new THREE.MeshBasicMaterial({ map: panoramaTexture, side: THREE.DoubleSide });
-const sphere = new THREE.Mesh(geometry, material);
-
-scene.add(sphere);
-
-camera.position.z = 0.1;
 
 
 // OrbitControls 설정
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.minPolarAngle = Math.PI / 6; // 원하는 최소 경사 각도로 설정
 controls.minDistance = 3; // 최소 거리를 3 미터로 설정
+// controls.maxDistance = 10000; // 더 큰 값으로 설정하여 더 크게 확대
+controls.enablePan = false; // 화면 드래그로 이동 비활성화
+controls.enableZoom = true; // 마우스 휠로 줌 가능하게 설정
+// controls.autoRotate = true; // 자동으로 회전하도록 설정
+controls.autoRotateSpeed = 1.0; // 회전 속도 설정
+
+
+/*
+    파노라마 구체 생성
+*/
+
+const panoramaGroup = new THREE.Group();
+scene.add(panoramaGroup);
+
+// 부모 구체의 텍스처 생성
+const parentTexture = new THREE.TextureLoader().load('static/game2/universe.jpg');
+parentTexture.minFilter = THREE.LinearFilter; // 화질 좋게
+const parentMaterial = new THREE.MeshBasicMaterial({ map: parentTexture, side: THREE.DoubleSide });
+const parentSphere = new THREE.Mesh(new THREE.SphereGeometry(1000, 60, 40), parentMaterial);
+scene.add(parentSphere);
+
+
+// 자식 구체
+const textureLoader = new THREE.TextureLoader();
+const panoramaTexture = textureLoader.load('static/game2/orora.jpg'); // 파노라마 이미지 경로
+panoramaTexture.minFilter = THREE.LinearFilter; // 화질 좋게
+const geometry = new THREE.SphereGeometry(400, 60, 40);
+const material = new THREE.MeshBasicMaterial({ map: panoramaTexture, side: THREE.DoubleSide });
+const sphere = new THREE.Mesh(geometry, material);
+sphere.position.set(100, 100, -100)
+scene.add(sphere);
+
+panoramaGroup.add(sphere);
+
+// 자식 구체2
+const textureLoader2 = new THREE.TextureLoader();
+const panoramaTexture2 = textureLoader2.load('static/game2/warehouse.jpg'); // 파노라마 이미지 경로
+panoramaTexture2.minFilter = THREE.LinearFilter; // 화질 좋게
+const geometry2 = new THREE.SphereGeometry(150, 30, 20);
+const material2 = new THREE.MeshBasicMaterial({ map: panoramaTexture2, side: THREE.DoubleSide });
+const sphere2 = new THREE.Mesh(geometry2, material2);
+sphere2.position.set(-700, 300, -100)
+scene.add(sphere2);
+
+panoramaGroup.add(sphere2);
+
+// 카메라 위치 설정
+camera.position.z = 900
+
+
+
 
 
 /*
@@ -86,18 +126,16 @@ loader.load(snowmanPath, (gltf) => {
   
     snowman1.rotateY(Math.PI);
 
-    snowman1.position.set(50, 30, -50);
+    snowman1.position.set(100, 0, -100);
 
     scene.add(snowman1);
 
     // 클릭 이벤트
     function onSnowmanClick(event) {
 
-        const mouse = new THREE.Vector2();
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        const raycaster = new THREE.Raycaster();
         raycaster.setFromCamera(mouse, camera);
 
         const intersects = raycaster.intersectObject(snowman1, true);
@@ -107,7 +145,24 @@ loader.load(snowmanPath, (gltf) => {
         }
     }
 
+    // 더블클릭 이벤트
+    function onSnowmanDblClick(event) {
+
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObject(snowman1, true);
+
+        if (intersects.length > 0) {
+            // 바깥으로 zoomout
+            camera.position.z = 900;
+        }
+    }
+
         domElement.addEventListener('click', onSnowmanClick, false);
+        domElement.addEventListener('dblclick', onSnowmanDblClick, false);
 
         animate();
 
@@ -115,51 +170,149 @@ loader.load(snowmanPath, (gltf) => {
 
 
 
-// 눈사람2
-let snowman2;
+// 산타
+let santa;
 
-loader.load(snowmanPath, (gltf) => {
+// GLTF 모델 파일 경로 설정
+const santaPath = 'static/game2/ChocoSantaClaus06_fbx/ChocoSantaClaus06.gltf';
 
-    snowman2 = gltf.scene;
+// 모델 크기를 조절할 비율 설정
+const santaScale = 200;
 
-    snowman2.scale.set(snowmanScale, snowmanScale, snowmanScale);
+loader.load(santaPath, (gltf) => {
+
+    santa = gltf.scene;
+
+    santa.scale.set(santaScale, santaScale, santaScale);
   
-    snowman2.rotateY(Math.PI);
+    santa.rotateY(Math.PI);
 
-    snowman2.position.set(-50, 30, -50);
+    santa.position.set(-50, 0, -100);
 
-    scene.add(snowman2);
+    scene.add(santa);
 
-    snowman2.addEventListener('click', () => {
-        onSnowmanClick(snowman2);
-    });
+    // 클릭 이벤트
+    function onSnowmanClick(event) {
 
-    animate();
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(mouse, camera);
+
+        const intersects = raycaster.intersectObject(santa, true);
+
+        if (intersects.length > 0) {
+            alert("나는 산타")
+        }
+    }
+
+        domElement.addEventListener('click', onSnowmanClick, false);
+
+        animate();
 
 })
 
 // 눈사람3
-let snowman3;
+// let snowman3;
 
-loader.load(snowmanPath, (gltf) => {
+// loader.load(snowmanPath, (gltf) => {
 
-    snowman3 = gltf.scene;
+//     snowman3 = gltf.scene;
 
-    snowman3.scale.set(snowmanScale, snowmanScale, snowmanScale);
+//     snowman3.scale.set(snowmanScale, snowmanScale, snowmanScale);
   
-    snowman3.rotateY(Math.PI);
+//     snowman3.rotateY(Math.PI);
 
-    snowman3.position.set(-50, 30, 50);
+//     snowman3.position.set(-50, 30, 50);
 
-    scene.add(snowman3);
+//     scene.add(snowman3);
 
-    snowman3.addEventListener('click', () => {
-        onSnowmanClick(snowman3);
-    });
+//     snowman3.addEventListener('click', () => {
+//         onSnowmanClick(snowman3);
+//     });
 
-    animate();
+//     animate();
 
-})
+// })
+
+
+/*
+    오로라행성 클릭
+*/
+
+window.addEventListener('click', clickOrora, false);
+
+function clickOrora(event) {
+
+    // 마우스 클릭 위치를 계산합니다.
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster로 클릭 위치에서 레이를 쏩니다.
+    raycaster.setFromCamera(mouse, camera);
+
+    // 카메라의 위치
+    const cameraPosition = camera.position.clone();
+
+    const intersects = raycaster.intersectObject(sphere)
+    
+    // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
+    if (cameraPosition.distanceTo(sphere.position) < sphere.geometry.parameters.radius) {
+        // 카메라가 자식 Sphere 내부에 있는 경우
+        if (intersects.length > 0) {
+            return
+        }
+    }else if(cameraPosition.distanceTo(sphere.position) >= sphere.geometry.parameters.radius){
+        // 안으로 zoomin
+        if (intersects.length > 0) {
+            
+            camera.position.set(-0.5, -1, 4);
+
+        }
+    }
+}
+
+
+
+/*
+    창고행성 클릭
+*/
+
+window.addEventListener('click', clickWarehouse, false);
+
+function clickWarehouse(event) {
+
+    // 마우스 클릭 위치를 계산합니다.
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster로 클릭 위치에서 레이를 쏩니다.
+    raycaster.setFromCamera(mouse, camera);
+
+    // 카메라의 위치
+    const cameraPosition = camera.position.clone();
+
+    const intersects = raycaster.intersectObject(sphere2)
+    
+        // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
+        if (cameraPosition.distanceTo(sphere2.position) < sphere2.geometry.parameters.radius) {
+            // 카메라가 자식 Sphere 내부에 있는 경우
+            if (intersects.length > 0) {
+                return
+            }
+        }else if(cameraPosition.distanceTo(sphere2.position) >= sphere2.geometry.parameters.radius){
+            // 화면 이동
+            if (intersects.length > 0) {
+                window.location.href = '/';
+            }
+        }
+    
+}
+
+
+
+
+
 
 
 /*
@@ -186,12 +339,25 @@ function createBallon() {
 
 }
 
+function onMouseClick() {
+    closeBalloon();
+}
+
+// 아래의 동작시 말풍선 닫힘
+domElement.addEventListener('click', onMouseClick, false);
+domElement.addEventListener('dblclick', onMouseClick, false);
+domElement.addEventListener('mousedown', onMouseClick, false);
+domElement.addEventListener('wheel', onMouseClick, false);
 
 
 
 
-
-
+// 말풍선을 닫는 함수
+function closeBalloon() {
+    if (balloonDiv) {
+        balloonDiv.style.display = 'none';
+    }
+}
 
 
 
@@ -201,18 +367,17 @@ function createBallon() {
 
 const animate = () => {
 
-    if (snowman1 && balloonDiv) {
+    if(snowman1 && balloonDiv){
         // 눈사람 위치를 계속 추적
         snowman1.getWorldPosition(balloonPosition);
     }
 
-    const snowmans = [snowman1, snowman2, snowman3];
-
-    snowmans.forEach((snowman) => {
-        if (snowman) {
-            snowman.rotation.y += 0.01; // 각 프레임마다 0.01 라디안만큼 y축으로 회전
-        }
-    });
+    if(snowman1){
+        snowman1.rotation.y += 0.01;
+    }
+    if(santa){
+        santa.rotation.y += 0.01;
+    }
 
     controls.update();
 
@@ -222,7 +387,6 @@ const animate = () => {
 };
 
 animate();
-
 
 
 

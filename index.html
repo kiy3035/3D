@@ -173,7 +173,7 @@
     var universeMesh = new THREE.Mesh(universeGeometry, universeMaterial);
 
     universeMesh.position.set(6, 3, 0);
-    scene.add(universeMesh);
+    // scene.add(universeMesh);     -- 이거 풀면 우주 생김
     
 
     function updateUniversePosition() {
@@ -220,7 +220,7 @@
     // 비디오 끝 이벤트 리스너 등록
     video.addEventListener('ended', videoEnded);
 
-    videoContainer.appendChild(video);
+    // videoContainer.appendChild(video); -- 이거 풀면 슬라임 생김
     
     // 애니메이션 루프
     const animate = () => {
