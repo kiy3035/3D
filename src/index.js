@@ -1,7 +1,8 @@
-import * as THREE from 'three'
+import * as THREE from '../node_modules/three/build/three.module.js';
 import { WEBGL } from './webgl'
-import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { DragControls } from '../node_modules/three/examples/jsm/controls/DragControls.js'
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js'
+
 
 if (WEBGL.isWebGLAvailable()) {
   var camera, scene, renderer, controls;
