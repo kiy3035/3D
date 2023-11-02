@@ -1,55 +1,107 @@
-// import * as THREE from '../node_modules/three/src/three.js';
 import * as THREE from '../node_modules/three/build/three.module.js';
+import { OrbitControls } from '../node_modules/three/examples/jsm/controls/OrbitControls.js';
+// import { PointerLockControls } from '../node_modules/three/examples/jsm/controls/PointerLockControls.js';
+import * as TWEEN from '../node_modules/tween.js/src/Tween.js';
 import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-// import { GLTFLoader } from '../node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+
+
+/*
+    초기 세팅
+*/
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 10000);
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+const renderer = new THREE.WebGLRenderer();
 
-camera.position.set(0, 0, 150);
+// 클릭 이벤트를 감지할 DOM 요소를 선택합니다.
+const domElement = renderer.domElement;
 
-scene.background = new THREE.Color('white');
-
-const light = new THREE.DirectionalLight(0xffffff, 10);
-scene.add(light);
-
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-canvas.appendChild(renderer.domElement);
+document.body.appendChild(renderer.domElement);
 
-window.addEventListener('resize', () => {
-  const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  };
 
-  camera.aspect = sizes.width / sizes.height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(sizes.width, sizes.height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-});
+/*
+    파노라마 배경
+*/
 
-const loader = new GLTFLoader();
-const modelPath = 'static/textures/ramenShop.gltf';
+const textureLoader = new THREE.TextureLoader();
+const panoramaTexture = textureLoader.load('static/game2/ho1.jpg'); // 패노라마 이미지 경로
+panoramaTexture.minFilter = THREE.LinearFilter; 
 
-loader.load(modelPath, (gltf) => {
-  const model = gltf.scene;
-  scene.add(model);
-}, undefined, (error) => {
-  console.error('GLTF 모델 로딩 중 오류 발생:', error);
-});
-camera.position.set(0, 8, 0); // 카메라의 초기 위치를 (0, 10, 0)으로 설정 (x, y, z 좌표)
-camera.lookAt(0, 0, 0); // 카메라가 (0, 0, 0)을 향하도록 설정
+const geometry = new THREE.SphereGeometry(50, 60, 40);
+const material = new THREE.MeshBasicMaterial({ map: panoramaTexture, side: THREE.DoubleSide });
+const sphere = new THREE.Mesh(geometry, material);
 
-// 이미지 텍스처 로드
-const textureLoader2 = new THREE.TextureLoader();
-const floorTexture = textureLoader2.load('static/first/soil.jpg');
+scene.add(sphere);
+
+camera.position.z = 0.1;
+
+
+// OrbitControls 설정
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.minPolarAngle = Math.PI / 6; // 원하는 최소 경사 각도로 설정
+controls.minDistance = 3; // 최소 거리를 3 미터로 설정
+
+
+/*
+    조명 생성
+*/
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // 주변 조명
+scene.add(ambientLight);
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); // 태양 빛처럼 햇빛
+directionalLight.position.set(1, 5, 1);
+directionalLight.castShadow = true; // 그림자 투사 활성화
+scene.add(directionalLight);
+
+// 렌더러 설정 (그림자 활성화)
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+    애니메이션
+*/
 
 const animate = () => {
-  window.requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+
+
+    controls.update();
+
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+
 };
 
 animate();
+
+
+
+
+
+/*
+    반응형
+*/
+
+function onWindowResize() {
+    const newWidth = window.innerWidth;
+    const newHeight = window.innerHeight;
+  
+    camera.aspect = newWidth / newHeight;
+    camera.updateProjectionMatrix();
+  
+    renderer.setSize(newWidth, newHeight);
+}
+  
+window.addEventListener('resize', onWindowResize);

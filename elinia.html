@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>엘리니아 3D 모델</title>
+    <meta charset="utf-8">
     <style>
-        * {
-          margin: 0;
-          padding: 0;
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        #balloon-text {
+            position: absolute;
+            background-color: white;
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 5px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
-  <script type="module" src="/src/elinia.js"></script>
+    <div id="balloon-text"></div>
+    <script type="module" src="src/elinia.js"></script>
 </body>
 </html>
