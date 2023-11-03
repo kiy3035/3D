@@ -88,9 +88,9 @@ scene.add(sphere3);
 panoramaGroup.add(sphere3);
 
 // 카메라 위치 설정
-// camera.position.z = 900;
-camera.position.z = 4;
-controls.autoRotate = false;
+camera.position.z = 900;
+// camera.position.z = 4;
+// controls.autoRotate = false;
 
 
 
