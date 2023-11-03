@@ -88,7 +88,9 @@ scene.add(sphere3);
 panoramaGroup.add(sphere3);
 
 // 카메라 위치 설정
-camera.position.z = 900;
+// camera.position.z = 900;
+camera.position.z = 4;
+controls.autoRotate = false;
 
 
 
@@ -109,8 +111,118 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
 
+
+
 /*
-    눈사람 생성
+    행성 클릭
+*/
+
+// 오로라 더블클릭
+window.addEventListener('dblclick', dblClickOrora, false);
+
+function dblClickOrora(event) {
+
+    // 마우스 클릭 위치를 계산합니다.
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster로 클릭 위치에서 레이를 쏩니다.
+    raycaster.setFromCamera(mouse, camera);
+
+    // 카메라의 위치
+    const cameraPosition = camera.position.clone();
+
+    const intersects = raycaster.intersectObject(sphere);
+    
+    // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
+    if (cameraPosition.distanceTo(sphere.position) < sphere.geometry.parameters.radius) {
+        // 카메라가 자식 Sphere 내부에 있는 경우
+        if (intersects.length > 0) {
+            return
+        }
+    }else if(cameraPosition.distanceTo(sphere.position) >= sphere.geometry.parameters.radius){
+        // 안으로 zoomin
+        if (intersects.length > 0) {
+            camera.position.set(-0.5, -1, 4);
+            controls.autoRotate = false; // 회전 멈춤
+        }
+        
+    }
+    
+}
+
+
+
+// 창고 더블클릭
+window.addEventListener('dblclick', dblClickWarehouse, false);
+
+function dblClickWarehouse(event) {
+
+    // 마우스 클릭 위치를 계산합니다.
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster로 클릭 위치에서 레이를 쏩니다.
+    raycaster.setFromCamera(mouse, camera);
+
+    // 카메라의 위치
+    const cameraPosition = camera.position.clone();
+
+    const intersects = raycaster.intersectObject(sphere2)
+    
+        // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
+        if (cameraPosition.distanceTo(sphere2.position) < sphere2.geometry.parameters.radius) {
+            // 카메라가 자식 Sphere 내부에 있는 경우
+            if (intersects.length > 0) {
+                return
+            }
+        }else if(cameraPosition.distanceTo(sphere2.position) >= sphere2.geometry.parameters.radius){
+            // 화면 이동
+            if (intersects.length > 0) {
+                window.location.href = 'fourContainer.html'
+            }
+        }
+    
+}
+
+
+
+// 지구 더블클릭
+window.addEventListener('dblclick', dblClickEarth, false);
+
+function dblClickEarth(event) {
+
+    // 마우스 클릭 위치를 계산합니다.
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    // Raycaster로 클릭 위치에서 레이를 쏩니다.
+    raycaster.setFromCamera(mouse, camera);
+
+    // 카메라의 위치
+    const cameraPosition = camera.position.clone();
+
+    const intersects = raycaster.intersectObject(sphere3)
+    
+        // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
+        if (cameraPosition.distanceTo(sphere3.position) < sphere3.geometry.parameters.radius) {
+            // 카메라가 자식 Sphere 내부에 있는 경우
+            if (intersects.length > 0) {
+                return
+            }
+        }else if(cameraPosition.distanceTo(sphere3.position) >= sphere3.geometry.parameters.radius){
+            // 화면 이동
+            if (intersects.length > 0) {
+                window.location.href = '/universe.html';
+            }
+        }
+    
+}
+
+
+
+/*
+    gltf 애들 생성
 */
 
 
@@ -151,7 +263,7 @@ loader.load(snowmanPath, (gltf) => {
         const intersects = raycaster.intersectObject(snowman, true);
 
         if (intersects.length > 0) {
-            createBallon();
+            createBalloon();
         }
     }
 
@@ -211,7 +323,7 @@ loader.load(santaPath, (gltf) => {
         const intersects = raycaster.intersectObject(santa, true);
 
         if (intersects.length > 0) {
-            alert("로그인 페이지 준비중");
+            createHologram();
         }
     }
 
@@ -262,122 +374,12 @@ loader.load(dicePath, (gltf) => {
 })
 
 
-/*
-    오로라행성 클릭
-*/
-
-window.addEventListener('dblclick', dblClickOrora, false);
-
-function dblClickOrora(event) {
-
-    // 마우스 클릭 위치를 계산합니다.
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Raycaster로 클릭 위치에서 레이를 쏩니다.
-    raycaster.setFromCamera(mouse, camera);
-
-    // 카메라의 위치
-    const cameraPosition = camera.position.clone();
-
-    const intersects = raycaster.intersectObject(sphere);
-    
-    // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
-    if (cameraPosition.distanceTo(sphere.position) < sphere.geometry.parameters.radius) {
-        // 카메라가 자식 Sphere 내부에 있는 경우
-        if (intersects.length > 0) {
-            return
-        }
-    }else if(cameraPosition.distanceTo(sphere.position) >= sphere.geometry.parameters.radius){
-        // 안으로 zoomin
-        if (intersects.length > 0) {
-            camera.position.set(-0.5, -1, 4);
-            controls.autoRotate = false; // 회전 멈춤
-        }
-        
-    }
-    
-}
-
-
-
-/*
-    창고행성 클릭
-*/
-
-window.addEventListener('dblclick', dblClickWarehouse, false);
-
-function dblClickWarehouse(event) {
-
-    // 마우스 클릭 위치를 계산합니다.
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Raycaster로 클릭 위치에서 레이를 쏩니다.
-    raycaster.setFromCamera(mouse, camera);
-
-    // 카메라의 위치
-    const cameraPosition = camera.position.clone();
-
-    const intersects = raycaster.intersectObject(sphere2)
-    
-        // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
-        if (cameraPosition.distanceTo(sphere2.position) < sphere2.geometry.parameters.radius) {
-            // 카메라가 자식 Sphere 내부에 있는 경우
-            if (intersects.length > 0) {
-                return
-            }
-        }else if(cameraPosition.distanceTo(sphere2.position) >= sphere2.geometry.parameters.radius){
-            // 화면 이동
-            if (intersects.length > 0) {
-                window.location.href = 'fourContainer.html'
-            }
-        }
-    
-}
-
-
-/*
-    지구행성 클릭
-*/
-
-window.addEventListener('dblclick', dblClickEarth, false);
-
-function dblClickEarth(event) {
-
-    // 마우스 클릭 위치를 계산합니다.
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    // Raycaster로 클릭 위치에서 레이를 쏩니다.
-    raycaster.setFromCamera(mouse, camera);
-
-    // 카메라의 위치
-    const cameraPosition = camera.position.clone();
-
-    const intersects = raycaster.intersectObject(sphere3)
-    
-        // 카메라가 자식 Sphere 내부로 들어왔을 때만 클릭 이벤트 처리
-        if (cameraPosition.distanceTo(sphere3.position) < sphere3.geometry.parameters.radius) {
-            // 카메라가 자식 Sphere 내부에 있는 경우
-            if (intersects.length > 0) {
-                return
-            }
-        }else if(cameraPosition.distanceTo(sphere3.position) >= sphere3.geometry.parameters.radius){
-            // 화면 이동
-            if (intersects.length > 0) {
-                window.location.href = '/universe.html';
-            }
-        }
-    
-}
-
 
 /*
     말풍선
 */
 
-function createBallon() {
+function createBalloon() {
 
     if (balloonDiv) {
 
@@ -399,13 +401,14 @@ function createBallon() {
 
 function onMouseClick() {
     closeBalloon();
+    closeHologram();
 }
 
 // 아래의 동작시 말풍선 닫힘
 domElement.addEventListener('click', onMouseClick, false);
 domElement.addEventListener('dblclick', onMouseClick, false);
-domElement.addEventListener('mousedown', onMouseClick, false);
-domElement.addEventListener('wheel', onMouseClick, false);
+// domElement.addEventListener('mousedown', onMouseClick, false);
+// domElement.addEventListener('wheel', onMouseClick, false);
 
 
 
@@ -416,6 +419,92 @@ function closeBalloon() {
         balloonDiv.style.display = 'none';
     }
 }
+
+
+
+
+/*
+    홀로그램
+*/
+
+let inputContainer;
+let panel;
+
+function createHologram(){
+
+    // 얇은 직육면체 모델 생성
+    const width = 3;
+    const height = 1;
+    const depth = 0.2;
+    const panelGeometry = new THREE.BoxGeometry(width, height, depth);
+    const panelMaterial = new THREE.MeshBasicMaterial({ color: new THREE.Color(0xFFFFE0).set(0xFFFFE0, 0.8) });
+    panel = new THREE.Mesh(panelGeometry, panelMaterial);
+    scene.add(panel);
+    
+    // HTML 입력 필드 생성 및 3D 모델 위에 배치
+    inputContainer = document.createElement("div");
+    inputContainer.id = "inputContainer";
+    document.body.appendChild(inputContainer);
+
+    const idInput = document.createElement("input");
+    idInput.type = "text";
+    idInput.placeholder = "ID";
+    inputContainer.appendChild(idInput);
+
+    const pwInput = document.createElement("input");
+    pwInput.type = "password";
+    pwInput.placeholder = "Password";
+    inputContainer.appendChild(pwInput);
+
+    const div = document.createElement("div");
+    const btnLogin = document.createElement("button");
+    btnLogin.textContent = "Login";
+    btnLogin.id = "idLogin";
+
+    // 버튼 스타일 설정
+    btnLogin.style.position = "absolute";
+    btnLogin.style.left = "50%";
+    btnLogin.style.top = "50%";
+    btnLogin.style.transform = "translate(-50%, 180%)";
+    inputContainer.appendChild(div);
+    inputContainer.appendChild(btnLogin);
+
+    btnLogin.addEventListener("click", clickLogin, true);
+
+}
+
+// 홀로그램 제거
+function closeHologram(){
+    if (inputContainer) {
+        inputContainer.style.display = 'none';
+        scene.remove(panel);
+    }
+}
+
+function clickLogin(){
+
+    const toast = document.getElementById("toast");
+    toast.style.display = "block";
+    toast.style.left = "50%";
+    toast.style.top = "50%";
+    toast.style.transform = "translate(-50%, -50%)";
+    toast.style.width = "200px";
+    toast.style.height = "40px";
+    toast.textContent = "로그인 성공";
+    toast.style.textAlign = "center";
+
+    // 수직 가운데 정렬
+    toast.style.display = "flex";
+    toast.style.justifyContent = "center";
+    toast.style.alignItems = "center";
+
+    closeHologram();
+
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 1000);
+}
+
 
 
 /*
@@ -444,12 +533,18 @@ const animate = (val) => {
     }
 
     controls.update();
+
+    if(panel){
+        panel.position.copy(controls.target);
+    }
+
     renderer.render(scene, camera);
     requestAnimationFrame(animate);
 
 };
 
 animate();
+
 
 
 
