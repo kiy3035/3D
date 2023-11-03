@@ -15,10 +15,31 @@
             border-radius: 5px;
             text-align: center;
         }
+        #inputContainer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        /* 토스트 메시지 스타일 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
     </style>
 </head>
 <body>
     <div id="balloon-text"></div>
+    <button style="text-align: center;">Login</button>
+    <div id="toast" class="toast"></div>
     <script type="module" src="src/homeIndex.js"></script>
 </body>
 </html>
