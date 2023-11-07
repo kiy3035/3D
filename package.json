@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server --mode development --port 9000 --openssl-legacy-provider start",
+    "start": "webpack-dev-server --mode development --port 9000 & SET NODE_OPTIONS=--openssl-legacy-provider && node server.js --mode development --port 9001",
     "format": "prettier --write '**/*.js'"
   },
   "keywords": [],
@@ -26,6 +26,7 @@
     "tween.js": "^16.6.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "prettier": "^2.0.4",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",
