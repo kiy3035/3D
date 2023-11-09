@@ -272,7 +272,7 @@ window.setTransData = function(value, type, src) {
     cube.scale.set(value2[0], value2[2], value2[1]);
     cube.position.set(value2[3], value2[4], value2[5]);
     scene.add(cube);
-
+    
     cubeUUIDList.push(cube.uuid);
     console.log(cube)
 
@@ -286,7 +286,10 @@ window.setTransData = function(value, type, src) {
       vertical: value2[1],
       uuid: cube.uuid
     };
-    
+
+    console.log(cube.scale)
+    console.log(cube.position)
+
     shapeData.push(data);
 
   }
