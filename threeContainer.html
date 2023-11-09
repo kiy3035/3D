@@ -36,7 +36,6 @@
       }
       /* 짝수 행 배경색 설정 */
       tr:nth-child(even) {
-        background-color: #f2f2f2;
       }
       .classTopMan {
         text-align: center;
@@ -163,6 +162,7 @@
                     <tr>
                         <th>제목</th>
                         <th>내용</th>
+                        <th>유형</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -294,7 +294,6 @@
 
     if(val.length != undefined){
       setTransData(val, 'DB', src);
-
       if(backImg == "wh"){
         fnSelectWarehouse(backImg);
       }else if(backImg == "vs"){
@@ -413,17 +412,32 @@
           var row = tableBody.insertRow(i);
           var titleCell = row.insertCell(0); // 첫번째 컬럼
           var contentCell = row.insertCell(1); // 두번쨰 컬럼
+          var typeCell = row.insertCell(2); // 세번쨰 컬럼
+
 
           titleCell.textContent = data[i].TITLE;
           contentCell.textContent = data[i].BIGO;
-          titleCell.style.cursor = 'pointer';
-          titleCell.style.color = 'blue';
+          typeCell.textContent = data[i].SCENE;
 
-          titleCell.addEventListener('click', function () {
+          
+          if(data[i].SCENECODE == scene){
+            titleCell.style.cursor = 'pointer';
+            titleCell.style.color = 'blue';
+            titleCell.addEventListener('click', function () {
             
             var clickedTitle = data[i].TITLE;
             fnSetDatas(clickedTitle, selectedContainer);
           });
+          }else{
+            titleCell.style.color = 'gray';
+            contentCell.style.color = 'gray';
+            typeCell.style.color = 'gray';
+            titleCell.style.backgroundColor= '#f2f2f2';
+            contentCell.style.backgroundColor= '#f2f2f2';
+            typeCell.style.backgroundColor= '#f2f2f2';
+          }
+
+          
 
         }
         
@@ -477,14 +491,14 @@
     const loader = document.querySelector('.loader');
     loader.style.width = '100%';
 
-    setTimeout(function() {
+    // setTimeout(function() {
       init("warehouse", selectedContainer);
       $(".loader-container").hide();
       afterSearch();
       $("#btnVessel").removeClass("btn btn-success").addClass("btn btn-light");
       $("#btnWarehouse").removeClass("btn btn-light").addClass("btn btn-success");
       changeCSS();
-    }, 1000); // 1000ms = 1s
+    // }, 1000); // 1000ms = 1s
   }
 
 
@@ -498,14 +512,14 @@
     const loader = document.querySelector('.loader');
     loader.style.width = '100%';
     
-    setTimeout(function() {
+    // setTimeout(function() {
       init("vessel", selectedContainer);
       $(".loader-container").hide();
       afterSearch();
       $("#btnWarehouse").removeClass("btn btn-success").addClass("btn btn-light");
       $("#btnVessel").removeClass("btn btn-light").addClass("btn btn-success");
       changeCSS();
-    }, 1000); // 1000ms = 1s
+    // }, 1000); // 1000ms = 1s
    
 
 }
@@ -547,7 +561,7 @@ function fnSetDatas(val, src){
       $('#searchTitles').modal('hide');
       var backImg = data[0].SCENE;
       fnClickTrans(data, src, backImg);
-
+      
       // 삭제 버튼 보이게
       $("#btnDel").show();
     }
