@@ -368,7 +368,7 @@ function convertScene(val) {
 
 // 첫화면 설정
 window.defaultPage = function(src){
-
+console.log("1111111111111111")
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff)
 
@@ -382,7 +382,7 @@ window.defaultPage = function(src){
   })
 
   const boxes = [];
-
+  console.log("22222222222")
   for (let i = 0; i < 3; i++) {
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const cube = new THREE.Mesh(geometry, cubeMaterial);
@@ -390,7 +390,7 @@ window.defaultPage = function(src){
     scene.add(cube);
     boxes.push(cube);
   }
-
+  console.log("3333333")
   const light = new THREE.PointLight(0xffffff);
   light.position.set(10, 10, 10);
   scene.add(light);
